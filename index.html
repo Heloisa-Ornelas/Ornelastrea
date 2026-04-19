@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ornelas Advocacia - Sistema de Gestão</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Tela de login */
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .login-container h1 {
+            color: #1e3c72;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 12px;
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .login-container button:hover {
+            background: #1e3c72;
+        }
+
+        .error {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        /* Sistema principal */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .header {
+            background: #1e3c72;
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h2 {
+            font-size: 24px;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f0f0f0;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: white;
+            border-bottom: 3px solid #2a5298;
+            color: #2a5298;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.3s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .search-bar {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .search-bar button {
+            padding: 12px 24px;
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .add-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .add-btn:hover {
+            background: #218838;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .edit-btn, .delete-btn {
+            padding: 5px 10px;
+            margin: 0 3px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .edit-btn {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-content input, .modal-content select, .modal-content textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        .timeline {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .timeline-item {
+            padding: 10px;
+            border-left: 3px solid #2a5298;
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+
+        .alert {
+            background: #ffc107;
+            color: #000;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .tabs {
+                flex-wrap: wrap;
+            }
+            table {
+                font-size: 12px;
+            }
+            td, th {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Tela de Login -->
+    <div class="login-container" id="loginScreen">
+        <h1>⚖️ Ornelas Advocacia</h1>
+        <input type="password" id="passwordInput" placeholder="Digite a senha" autocomplete="off">
+        <button onclick="login()">Acessar Sistema</button>
+        <div class="error" id="loginError"></div>
+        <div style="margin-top: 20px; font-size: 12px; color: #666; text-align: center;">
+            * Senha padrão: ornelas2024
+        </div>
+    </div>
+
+    <!-- Sistema Principal -->
+    <div class="main-container" id="mainScreen">
+        <div class="header">
+            <h2>⚖️ Ornelas Advocacia - Gestão de Processos</h2>
+            <button class="logout-btn" onclick="logout()">Sair</button>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="pessoas">👥 Pessoas</div>
+            <div class="tab" data-tab="processos">📋 Processos</div>
+            <div class="tab" data-tab="honorarios">💰 Honorários</div>
+            <div class="tab" data-tab="vencimentos">📅 Vencimentos</div>
+        </div>
+
+        <!-- Aba Pessoas -->
+        <div class="tab-content active" id="tabPessoas">
+            <div class="search-bar">
+                <input type="text" id="searchPessoas" placeholder="Pesquisar por nome, CPF/CNPJ...">
+                <button onclick="searchPessoas()">🔍 Pesquisar</button>
+                <button class="add-btn" onclick="openModal('pessoa')">+ Nova Pessoa</button>
+            </div>
+            <div id="pessoasList"></div>
+        </div>
+
+        <!-- Aba Processos -->
+        <div class="tab-content" id="tabProcessos">
+            <div class="search-bar">
+                <input type="text" id="searchProcessos" placeholder="Pesquisar por número do processo, cliente...">
+                <button onclick="searchProcessos()">🔍 Pesquisar</button>
+                <button class="add-btn" onclick="openModal('processo')">+ Novo Processo</button>
+            </div>
+            <div id="processosList"></div>
+        </div>
+
+        <!-- Aba Honorários -->
+        <div class="tab-content" id="tabHonorarios">
+            <div class="search-bar">
+                <input type="text" id="searchHonorarios" placeholder="Pesquisar por cliente...">
+                <button onclick="searchHonorarios()">🔍 Pesquisar</button>
+                <button class="add-btn" onclick="openModal('honorario')">+ Lançar Honorário</button>
+            </div>
+            <div id="honorariosList"></div>
+        </div>
+
+        <!-- Aba Vencimentos -->
+        <div class="tab-content" id="tabVencimentos">
+            <div id="vencimentosList"></div>
+        </div>
+    </div>
+
+    <!-- Modal Genérico -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle"></h3>
+            <div id="modalBody"></div>
+            <button onclick="closeModal()" style="margin-top: 15px; padding: 8px 16px;">Cancelar</button>
+            <button onclick="saveModal()" style="margin-top: 15px; padding: 8px 16px; background: #28a745; color: white; border: none; border-radius: 6px;">Salvar</button>
+        </div>
+    </div>
+
+    <script>
+        // DADOS INICIAIS (serão salvos no localStorage)
+        let dados = {
+            pessoas: [],
+            processos: [],
+            honorarios: [],
+            timeline: []
+        };
+
+        let currentEditId = null;
+        let currentModalType = null;
+        let currentSearchResults = null;
+
+        // Senha padrão
+        const SENHA = "ornelas2024";
+
+        // Inicialização
+        function init() {
+            carregarDados();
+            if(dados.pessoas.length === 0) {
+                // Dados de exemplo
+                dados.pessoas.push({ id: 1, nome: "João Silva", tipo: "Física", documento: "123.456.789-00", contato: "joao@email.com" });
+                dados.pessoas.push({ id: 2, nome: "Empresa XPTO", tipo: "Jurídica", documento: "12.345.678/0001-90", contato: "contato@xpto.com" });
+                
+                dados.processos.push({ id: 1, numero: "1234/2024", clienteId: 1, status: "Em andamento", descricao: "Ação trabalhista" });
+                dados.processos.push({ id: 2, numero: "5678/2024", clienteId: 2, status: "Arquivado", descricao: "Cobrança" });
+                
+                dados.honorarios.push({ id: 1, pessoaId: 1, valorTotal: 3000, parcelas: 3, parcelasPagas: 1, vencimentoDia: 27 });
+                dados.honorarios.push({ id: 2, pessoaId: 2, valorTotal: 5000, parcelas: 10, parcelasPagas: 5, vencimentoDia: 15 });
+                
+                dados.timeline.push({ id: 1, processoId: 1, data: "2024-01-10", descricao: "Petição inicial protocolada" });
+                dados.timeline.push({ id: 2, processoId: 1, data: "2024-02-15", descricao: "Citação realizada" });
+                dados.timeline.push({ id: 3, processoId: 2, data: "2024-01-20", descricao: "Contestação apresentada" });
+                
+                salvarDados();
+            }
+            renderizarTudo();
+        }
+
+        function carregarDados() {
+            const saved = localStorage.getItem("ornelas_advocacia");
+            if(saved) {
+                dados = JSON.parse(saved);
+            }
+        }
+
+        function salvarDados() {
+            localStorage.setItem("ornelas_advocacia", JSON.stringify(dados));
+        }
+
+        function login() {
+            const senha = document.getElementById("passwordInput").value;
+            if(senha === SENHA) {
+                document.getElementById("loginScreen").style.display = "none";
+                document.getElementById("mainScreen").style.display = "block";
+                init();
+            } else {
+                document.getElementById("loginError").innerText = "Senha incorreta!";
+            }
+        }
+
+        function logout() {
+            document.getElementById("loginScreen").style.display = "block";
+            document.getElementById("mainScreen").style.display = "none";
+            document.getElementById("passwordInput").value = "";
+        }
+
+        // Abas
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.dataset.tab;
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                document.getElementById(`tab${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`).classList.add('active');
+                renderizarTudo();
+            });
+        });
+
+        function renderizarTudo() {
+            renderizarPessoas();
+            renderizarProcessos();
+            renderizarHonorarios();
+            renderizarVencimentos();
+        }
+
+        function getPessoaNome(id) {
+            const pessoa = dados.pessoas.find(p => p.id == id);
+            return pessoa ? pessoa.nome : "N/A";
+        }
+
+        function getProcessosByPessoa(pessoaId) {
+            return dados.processos.filter(p => p.clienteId == pessoaId);
+        }
+
+        function getHonorariosByPessoa(pessoaId) {
+            return dados.honorarios.filter(h => h.pessoaId == pessoaId);
+        }
+
+        function renderizarPessoas(filtro = "") {
+            let lista = dados.pessoas;
+            if(filtro) {
+                lista = lista.filter(p => p.nome.toLowerCase().includes(filtro.toLowerCase()) || p.documento.includes(filtro));
+            }
+            
+            let html = '<table><tr><th>Nome</th><th>Tipo</th><th>Documento</th><th>Contato</th><th>Processos</th><th>Honorários</th><th>Ações</th></tr>';
+            lista.forEach(p => {
+                const processos = getProcessosByPessoa(p.id);
+                const honorarios = getHonorariosByPessoa(p.id);
+                const totalDevido = honorarios.reduce((acc, h) => acc + ((h.valorTotal / h.parcelas) * (h.parcelas - h.parcelasPagas)), 0);
+                
+                html += `<tr>
+                    <td>${p.nome}</td>
+                    <td>${p.tipo}</td>
+                    <td>${p.documento}</td>
+                    <td>${p.contato || '-'}</td>
+                    <td>${processos.map(pr => pr.numero).join(', ') || '-'}</td>
+                    <td>R$ ${totalDevido.toFixed(2)}</td>
+                    <td>
+                        <button class="edit-btn" onclick="editarPessoa(${p.id})">✏️</button>
+                        <button class="delete-btn" onclick="excluirPessoa(${p.id})">🗑️</button>
+                    </td>
+                </tr>`;
+            });
+            html += '</table>';
+            document.getElementById("pessoasList").innerHTML = html;
+        }
+
+        function renderizarProcessos(filtro = "") {
+            let lista = dados.processos;
+            if(filtro) {
+                lista = lista.filter(p => p.numero.includes(filtro) || getPessoaNome(p.clienteId).toLowerCase().includes(filtro.toLowerCase()));
+            }
+            
+            let html = '<table><tr><th>Número</th><th>Cliente</th><th>Status</th><th>Descrição</th><th>Linha do Tempo</th><th>Ações</th></tr>';
+            lista.forEach(p => {
+                const timeline = dados.timeline.filter(t => t.processoId == p.id);
+                html += `<tr>
+                    <td>${p.numero}</td>
+                    <td>${getPessoaNome(p.clienteId)}</td>
+                    <td>${p.status}</td>
+                    <td>${p.descricao}</td>
+                    <td>
+                        <button onclick="verTimeline(${p.id})">📜 Ver (${timeline.length})</button>
+                    </td>
+                    <td>
+                        <button class="edit-btn" onclick="editarProcesso(${p.id})">✏️</button>
+                        <button class="delete-btn" onclick="excluirProcesso(${p.id})">🗑️</button>
+                    </td>
+                </tr>`;
+            });
+            html += '</table>';
+            document.getElementById("processosList").innerHTML = html;
+        }
+
+        function renderizarHonorarios(filtro = "") {
+            let lista = dados.honorarios;
+            if(filtro) {
+                lista = lista.filter(h => getPessoaNome(h.pessoaId).toLowerCase().includes(filtro.toLowerCase()));
+            }
+            
+            let html = '<table><tr><th>Cliente</th><th>Valor Total</th><th>Parcelas</th><th>Pagas</th><th>Valor Parcela</th><th>Saldo Devedor</th><th>Vencimento (Dia)</th><th>Ações</th></tr>';
+            lista.forEach(h => {
+                const valorParcela = h.valorTotal / h.parcelas;
+                const saldo = valorParcela * (h.parcelas - h.parcelasPagas);
+                html += `<tr>
+                    <td>${getPessoaNome(h.pessoaId)}</td>
+                    <td>R$ ${h.valorTotal.toFixed(2)}</td>
+                    <td>${h.parcelas}</td>
+                    <td>${h.parcelasPagas}</td>
+                    <td>R$ ${valorParcela.toFixed(2)}</td>
+                    <td><strong>R$ ${saldo.toFixed(2)}</strong></td>
+                    <td>Dia ${h.vencimentoDia}</td>
+                    <td>
+                        <button class="edit-btn" onclick="editarHonorario(${h.id})">✏️</button>
+                        <button class="delete-btn" onclick="excluirHonorario(${h.id})">🗑️</button>
+                    </td>
+                </tr>`;
+            });
+            html += '</table>';
+            document.getElementById("honorariosList").innerHTML = html;
+        }
+
+        function renderizarVencimentos() {
+            const hoje = new Date();
+            const diaAtual = hoje.getDate();
+            const mesAtual = hoje.getMonth() + 1;
+            
+            let proximos = [];
+            dados.honorarios.forEach(h => {
+                const pessoa = dados.pessoas.find(p => p.id == h.pessoaId);
+                const valorParcela = h.valorTotal / h.parcelas;
+                const parcelasRestantes = h.parcelas - h.parcelasPagas;
+                if(parcelasRestantes > 0) {
+                    let venceHoje = (h.vencimentoDia == diaAtual);
+                    let venceProximos = (h.vencimentoDia >= diaAtual && h.vencimentoDia <= diaAtual + 7);
+                    proximos.push({
+                        cliente: pessoa.nome,
+                        valor: valorParcela,
+                        vencimentoDia: h.vencimentoDia,
+                        parcelasRestantes: parcelasRestantes,
+                        alerta: venceHoje ? "VENCE HOJE!" : (venceProximos ? "Vence em breve" : "Normal")
+                    });
+                }
+            });
+            
+            let html = '<h3>📅 Próximos Vencimentos</h3>';
+            if(proximos.length === 0) {
+                html += '<p>Nenhum vencimento pendente.</p>';
+            } else {
+                html += '<table><tr><th>Cliente</th><th>Valor da Parcela</th><th>Dia Vencimento</th><th>Parcelas Restantes</th><th>Alerta</th></tr>';
+                proximos.forEach(p => {
+                    html += `<tr style="${p.alerta === 'VENCE HOJE!' ? 'background: #ffeb3b' : ''}">
+                        <td>${p.cliente}</td>
+                        <td>R$ ${p.valor.toFixed(2)}</td>
+                        <td>Dia ${p.vencimentoDia}</td>
+                        <td>${p.parcelasRestantes}</td>
+                        <td>${p.alerta}</td>
+                    </tr>`;
+                });
+                html += '</table>';
+            }
+            document.getElementById("vencimentosList").innerHTML = html;
+        }
+
+        // Funções CRUD
+        function editarPessoa(id) {
+            const pessoa = dados.pessoas.find(p => p.id == id);
+            currentEditId = id;
+            currentModalType = "pessoa";
+            document.getElementById("modalTitle").innerText = "Editar Pessoa";
+            document.getElementById("modalBody").innerHTML = `
+                <input type="text" id="nome" value="${pessoa.nome}" placeholder="Nome">
+                <select id="tipo"><option ${pessoa.tipo=="Física"?"selected":""}>Física</option><option ${pessoa.tipo=="Jurídica"?"selected":""}>Jurídica</option></select>
+                <input type="text" id="documento" value="${pessoa.documento}" placeholder="CPF/CNPJ">
+                <input type="text" id="contato" value="${pessoa.contato || ''}" placeholder="Contato">
+            `;
+            document.getElementById("modal").style.display = "flex";
+        }
+
+        function editarProcesso(id) {
+            const proc = dados.processos.find(p => p.id == id);
+            currentEditId = id;
+            currentModalType = "processo";
+            document.getElementById("modalTitle").innerText = "Editar Processo";
+            document.getElementById("modalBody").innerHTML = `
+                <input type="text" id="numero" value="${proc.numero}" placeholder="Número do Processo">
+                <select id="clienteId">${dados.pessoas.map(p => `<option ${p.id==proc.clienteId?"selected":""} value="${p.id}">${p.nome}</option>`).join('')}</select>
+                <input type="text" id="status" value="${proc.status}" placeholder="Status">
+                <textarea id="descricao" placeholder="Descrição">${proc.descricao}</textarea>
+                <hr><h4>Adicionar à Linha do Tempo</h4>
+                <input type="date" id="timelineData">
+                <input type="text" id="timelineDesc" placeholder="Descrição do evento">
+                <button onclick="adicionarTimeline(${id})">+ Adicionar Evento</button>
+                <div id="timelineList"></div>
+            `;
+            document.getElementById("modal").style.display = "flex";
+            renderizarTimelineModal(id);
+        }
+
+        function renderizarTimelineModal(processoId) {
+            const eventos = dados.timeline.filter(t => t.processoId == processoId);
+            let html = '<ul>';
+            eventos.forEach(e => {
+                html += `<li>${e.data} - ${e.descricao} <button onclick="excluirTimeline(${e.id})">❌</button></li>`;
+            });
+            html += '</ul>';
+            const timelineDiv = document.getElementById("timelineList");
+            if(timelineDiv) timelineDiv.innerHTML = html;
+        }
+
+        function adicionarTimeline(processoId) {
+            const data = document.getElementById("timelineData").value;
+            const desc = document.getElementById("timelineDesc").value;
+            if(data && desc) {
+                const newId = Math.max(0, ...dados.timeline.map(t => t.id), 0) + 1;
+                dados.timeline.push({ id: newId, processoId: processoId, data: data, descricao: desc });
+                salvarDados();
+                renderizarTimelineModal(processoId);
+                document.getElementById("timelineData").value = "";
+                document.getElementById("timelineDesc").value = "";
+            }
+        }
+
+        function excluirTimeline(id) {
+            dados.timeline = dados.timeline.filter(t => t.id != id);
+            salvarDados();
+            if(currentEditId && currentModalType=="processo") renderizarTimelineModal(currentEditId);
+        }
+
+        function verTimeline(processoId) {
+            const eventos = dados.timeline.filter(t => t.processoId == processoId).sort((a,b)=>a.data.localeCompare(b.data));
+            let html = '<div class="timeline"><h4>Linha do Tempo</h4>';
+            eventos.forEach(e => {
+                html += `<div class="timeline-item"><strong>${e.data}</strong><br>${e.descricao}</div>`;
+            });
+            html += '</div>';
+            alert(html);
+            // Poderia abrir um modal, mas pra simplificar usei alert
+        }
+
+        function editarHonorario(id) {
+            const honor = dados.honorarios.find(h => h.id == id);
+            currentEditId = id;
+            currentModalType = "honorario";
+            document.getElementById("modalTitle").innerText = "Editar Honorário";
+            document.getElementById("modalBody").innerHTML = `
+                <select id="pessoaId">${dados.pessoas.map(p => `<option ${p.id==honor.pessoaId?"selected":""} value="${p.id}">${p.nome}</option>`).join('')}</select>
+                <input type="number" id="valorTotal" value="${honor.valorTotal}" placeholder="Valor Total">
+                <input type="number" id="parcelas" value="${honor.parcelas}" placeholder="Número de Parcelas">
+                <input type="number" id="parcelasPagas" value="${honor.parcelasPagas}" placeholder="Parcelas Pagas">
+                <input type="number" id="vencimentoDia" value="${honor.vencimentoDia}" placeholder="Dia de Vencimento (1-31)">
+            `;
+            document.getElementById("modal").style.display = "flex";
+        }
+
+        function excluirPessoa(id) {
+            if(confirm("Excluir esta pessoa? Processos e honorários vinculados também serão removidos.")) {
+                dados.pessoas = dados.pessoas.filter(p => p.id != id);
+                dados.processos = dados.processos.filter(p => p.clienteId != id);
+                dados.honorarios = dados.honorarios.filter(h => h.pessoaId != id);
+                salvarDados();
+                renderizarTudo();
+            }
+        }
+
+        function excluirProcesso(id) {
+            if(confirm("Excluir este processo?")) {
+                dados.processos = dados.processos.filter(p => p.id != id);
+                dados.timeline = dados.timeline.filter(t => t.processoId != id);
+                salvarDados();
+                renderizarTudo();
+            }
+        }
+
+        function excluirHonorario(id) {
+            if(confirm("Excluir este honorário?")) {
+                dados.honorarios = dados.honorarios.filter(h => h.id != id);
+                salvarDados();
+                renderizarTudo();
+            }
+        }
+
+        function saveModal() {
+            if(currentModalType === "pessoa") {
+                const nome = document.getElementById("nome").value;
+                const tipo = document.getElementById("tipo").value;
+                const documento = document.getElementById("documento").value;
+                const contato = document.getElementById("contato").value;
+                if(currentEditId) {
+                    const idx = dados.pessoas.findIndex(p => p.id == currentEditId);
+                    dados.pessoas[idx] = { ...dados.pessoas[idx], nome, tipo, documento, contato };
+                }
+            } else if(currentModalType === "processo") {
+                const numero = document.getElementById("numero").value;
+                const clienteId = parseInt(document.getElementById("clienteId").value);
+                const status = document.getElementById("status").value;
+                const descricao = document.getElementById("descricao").value;
+                if(currentEditId) {
+                    const idx = dados.processos.findIndex(p => p.id == currentEditId);
+                    dados.processos[idx] = { ...dados.processos[idx], numero, clienteId, status, descricao };
+                }
+            } else if(currentModalType === "honorario") {
+                const pessoaId = parseInt(document.getElementById("pessoaId").value);
+                const valorTotal = parseFloat(document.getElementById("valorTotal").value);
+                const parcelas = parseInt(document.getElementById("parcelas").value);
+                const parcelasPagas = parseInt(document.getElementById("parcelasPagas").value);
+                const vencimentoDia = parseInt(document.getElementById("vencimentoDia").value);
+                if(currentEditId) {
+                    const idx = dados.honorarios.findIndex(h => h.id == currentEditId);
+                    dados.honorarios[idx] = { ...dados.honorarios[idx], pessoaId, valorTotal, parcelas, parcelasPagas, vencimentoDia };
+                }
+            }
+            salvarDados();
+            closeModal();
+            renderizarTudo();
+        }
+
+        function openModal(type) {
+            currentEditId = null;
+            currentModalType = type;
+            if(type === "pessoa") {
+                document.getElementById("modalTitle").innerText = "Nova Pessoa";
+                document.getElementById("modalBody").innerHTML = `
+                    <input type="text" id="nome" placeholder="Nome">
+                    <select id="tipo"><option>Física</option><option>Jurídica</option></select>
+                    <input type="text" id="documento" placeholder="CPF/CNPJ">
+                    <input type="text" id="contato" placeholder="Contato">
+                `;
+            } else if(type === "processo") {
+                document.getElementById("modalTitle").innerText = "Novo Processo";
+                document.getElementById("modalBody").innerHTML = `
+                    <input type="text" id="numero" placeholder="Número do Processo">
+                    <select id="clienteId">${dados.pessoas.map(p => `<option value="${p.id}">${p.nome}</option>`).join('')}</select>
+                    <input type="text" id="status" placeholder="Status">
+                    <textarea id="descricao" placeholder="Descrição"></textarea>
+                `;
+            } else if(type === "honorario") {
+                document.getElementById("modalTitle").innerText = "Lançar Honorário";
+                document.getElementById("modalBody").innerHTML = `
+                    <select id="pessoaId">${dados.pessoas.map(p => `<option value="${p.id}">${p.nome}</option>`).join('')}</select>
+                    <input type="number" id="valorTotal" placeholder="Valor Total">
+                    <input type="number" id="parcelas" placeholder="Número de Parcelas">
+                    <input type="number" id="parcelasPagas" placeholder="Parcelas Pagas (0 se nenhuma)">
+                    <input type="number" id="vencimentoDia" placeholder="Dia de Vencimento (1-31)">
+                `;
+            }
+            document.getElementById("modal").style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById("modal").style.display = "none";
+            currentEditId = null;
+        }
+
+        function searchPessoas() {
+            const termo = document.getElementById("searchPessoas").value;
+            renderizarPessoas(termo);
+        }
+
+        function searchProcessos() {
+            const termo = document.getElementById("searchProcessos").value;
+            renderizarProcessos(termo);
+        }
+
+        function searchHonorarios() {
+            const termo = document.getElementById("searchHonorarios").value;
+            renderizarHonorarios(termo);
+        }
+    </script>
+</body>
+</html>
