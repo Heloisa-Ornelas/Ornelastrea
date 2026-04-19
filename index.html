@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: #000000;
             min-height: 100vh;
             padding: 20px;
         }
@@ -22,14 +22,15 @@
         .login-container {
             max-width: 400px;
             margin: 100px auto;
-            background: white;
+            background: #1a1a1a;
             border-radius: 20px;
             padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 1px solid #333;
         }
 
         .login-container h1 {
-            color: #1e3c72;
+            color: #ffd700;
             margin-bottom: 30px;
             text-align: center;
         }
@@ -38,29 +39,32 @@
             width: 100%;
             padding: 12px;
             margin: 10px 0;
-            border: 1px solid #ddd;
+            border: 1px solid #333;
             border-radius: 8px;
             font-size: 16px;
+            background: #2a2a2a;
+            color: white;
         }
 
         .login-container button {
             width: 100%;
             padding: 12px;
-            background: #2a5298;
-            color: white;
+            background: #ffd700;
+            color: #000;
             border: none;
             border-radius: 8px;
             font-size: 16px;
             cursor: pointer;
             margin-top: 20px;
+            font-weight: bold;
         }
 
         .login-container button:hover {
-            background: #1e3c72;
+            background: #ffed4a;
         }
 
         .error {
-            color: red;
+            color: #ff4444;
             text-align: center;
             margin-top: 10px;
         }
@@ -69,20 +73,22 @@
         .main-container {
             max-width: 1400px;
             margin: 0 auto;
-            background: white;
+            background: #1a1a1a;
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
             display: none;
+            border: 1px solid #333;
         }
 
         .header {
-            background: #1e3c72;
-            color: white;
+            background: #000000;
+            color: #ffd700;
             padding: 20px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 2px solid #ffd700;
         }
 
         .header h2 {
@@ -90,9 +96,9 @@
         }
 
         .logout-btn {
-            background: rgba(255,255,255,0.2);
+            background: #333;
             border: none;
-            color: white;
+            color: #ffd700;
             padding: 8px 16px;
             border-radius: 8px;
             cursor: pointer;
@@ -100,8 +106,8 @@
 
         .tabs {
             display: flex;
-            background: #f0f0f0;
-            border-bottom: 2px solid #ddd;
+            background: #0a0a0a;
+            border-bottom: 1px solid #333;
         }
 
         .tab {
@@ -111,12 +117,13 @@
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s;
+            color: #ccc;
         }
 
         .tab.active {
-            background: white;
-            border-bottom: 3px solid #2a5298;
-            color: #2a5298;
+            background: #1a1a1a;
+            border-bottom: 3px solid #ffd700;
+            color: #ffd700;
         }
 
         .tab-content {
@@ -138,27 +145,31 @@
             margin-bottom: 30px;
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .search-bar input {
             flex: 1;
             padding: 12px;
-            border: 1px solid #ddd;
+            border: 1px solid #333;
             border-radius: 8px;
             font-size: 16px;
+            background: #2a2a2a;
+            color: white;
         }
 
         .search-bar button {
             padding: 12px 24px;
-            background: #2a5298;
-            color: white;
+            background: #ffd700;
+            color: #000;
             border: none;
             border-radius: 8px;
             cursor: pointer;
+            font-weight: bold;
         }
 
         .add-btn {
-            background: #28a745;
+            background: #00aa44;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -168,7 +179,7 @@
         }
 
         .add-btn:hover {
-            background: #218838;
+            background: #008833;
         }
 
         table {
@@ -180,16 +191,18 @@
         th, td {
             padding: 12px;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #333;
+            color: #ddd;
         }
 
         th {
-            background: #f8f9fa;
+            background: #0a0a0a;
             font-weight: bold;
+            color: #ffd700;
         }
 
         tr:hover {
-            background: #f5f5f5;
+            background: #2a2a2a;
         }
 
         .edit-btn, .delete-btn {
@@ -217,32 +230,46 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.8);
             z-index: 1000;
             justify-content: center;
             align-items: center;
         }
 
         .modal-content {
-            background: white;
+            background: #1a1a1a;
             padding: 30px;
             border-radius: 15px;
             max-width: 500px;
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
+            border: 1px solid #ffd700;
+        }
+
+        .modal-content h3 {
+            color: #ffd700;
+            margin-bottom: 20px;
         }
 
         .modal-content input, .modal-content select, .modal-content textarea {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
-            border: 1px solid #ddd;
+            border: 1px solid #333;
             border-radius: 6px;
+            background: #2a2a2a;
+            color: white;
+        }
+
+        .modal-content label {
+            color: #ffd700;
+            display: block;
+            margin-top: 10px;
         }
 
         .timeline {
-            background: #f8f9fa;
+            background: #0a0a0a;
             padding: 15px;
             border-radius: 10px;
             margin-top: 10px;
@@ -250,9 +277,10 @@
 
         .timeline-item {
             padding: 10px;
-            border-left: 3px solid #2a5298;
+            border-left: 3px solid #ffd700;
             margin-left: 20px;
             margin-bottom: 10px;
+            color: #ddd;
         }
 
         .alert {
@@ -261,6 +289,20 @@
             padding: 10px;
             border-radius: 8px;
             margin-bottom: 10px;
+        }
+
+        .sucesso {
+            background: #00aa44;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            text-align: center;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+            display: none;
         }
 
         @media (max-width: 768px) {
@@ -280,13 +322,13 @@
     <!-- Tela de Login -->
     <div class="login-container" id="loginScreen">
         <h1>⚖️ Ornelas Advocacia</h1>
-        <input type="password" id="passwordInput" placeholder="Digite a senha" autocomplete="off">
+        <input type="password" id="passwordInput" placeholder="Digite a senha de acesso" autocomplete="off">
         <button onclick="login()">Acessar Sistema</button>
         <div class="error" id="loginError"></div>
-        <div style="margin-top: 20px; font-size: 12px; color: #666; text-align: center;">
-            * Senha padrão: ornelas2024
-        </div>
     </div>
+
+    <!-- Mensagem de sucesso -->
+    <div class="sucesso" id="msgSucesso">✅ Salvo com sucesso!</div>
 
     <!-- Sistema Principal -->
     <div class="main-container" id="mainScreen">
@@ -343,13 +385,16 @@
         <div class="modal-content">
             <h3 id="modalTitle"></h3>
             <div id="modalBody"></div>
-            <button onclick="closeModal()" style="margin-top: 15px; padding: 8px 16px;">Cancelar</button>
-            <button onclick="saveModal()" style="margin-top: 15px; padding: 8px 16px; background: #28a745; color: white; border: none; border-radius: 6px;">Salvar</button>
+            <button onclick="closeModal()" style="margin-top: 15px; padding: 8px 16px; background:#333; color:white; border:none; border-radius:6px; cursor:pointer;">Cancelar</button>
+            <button onclick="saveModal()" style="margin-top: 15px; padding: 8px 16px; background: #00aa44; color: white; border: none; border-radius: 6px; cursor:pointer;">Salvar</button>
         </div>
     </div>
 
     <script>
-        // DADOS INICIAIS (serão salvos no localStorage)
+        // SENHA (agora escondida e alterada para heloisa01)
+        const SENHA = "heloisa01";
+
+        // DADOS (serão salvos no localStorage)
         let dados = {
             pessoas: [],
             processos: [],
@@ -359,10 +404,15 @@
 
         let currentEditId = null;
         let currentModalType = null;
-        let currentSearchResults = null;
 
-        // Senha padrão
-        const SENHA = "ornelas2024";
+        // Mostrar mensagem de sucesso
+        function mostrarSucesso() {
+            const msg = document.getElementById("msgSucesso");
+            msg.style.display = "block";
+            setTimeout(() => {
+                msg.style.display = "none";
+            }, 2000);
+        }
 
         // Inicialização
         function init() {
@@ -396,6 +446,7 @@
 
         function salvarDados() {
             localStorage.setItem("ornelas_advocacia", JSON.stringify(dados));
+            mostrarSucesso();
         }
 
         function login() {
@@ -453,7 +504,12 @@
                 lista = lista.filter(p => p.nome.toLowerCase().includes(filtro.toLowerCase()) || p.documento.includes(filtro));
             }
             
-            let html = '<table><tr><th>Nome</th><th>Tipo</th><th>Documento</th><th>Contato</th><th>Processos</th><th>Honorários</th><th>Ações</th></tr>';
+            if(lista.length === 0) {
+                document.getElementById("pessoasList").innerHTML = '<p style="color:#ddd; text-align:center;">Nenhuma pessoa cadastrada. Clique em "+ Nova Pessoa" para começar.</p>';
+                return;
+            }
+            
+            let html = '<tr><tr><th>Nome</th><th>Tipo</th><th>Documento</th><th>Contato</th><th>Processos</th><th>Honorários</th><th>Ações</th></tr>';
             lista.forEach(p => {
                 const processos = getProcessosByPessoa(p.id);
                 const honorarios = getHonorariosByPessoa(p.id);
@@ -482,7 +538,12 @@
                 lista = lista.filter(p => p.numero.includes(filtro) || getPessoaNome(p.clienteId).toLowerCase().includes(filtro.toLowerCase()));
             }
             
-            let html = '<table><tr><th>Número</th><th>Cliente</th><th>Status</th><th>Descrição</th><th>Linha do Tempo</th><th>Ações</th></tr>';
+            if(lista.length === 0) {
+                document.getElementById("processosList").innerHTML = '<p style="color:#ddd; text-align:center;">Nenhum processo cadastrado. Clique em "+ Novo Processo" para começar.</p>';
+                return;
+            }
+            
+            let html = '<tr><tr><th>Número</th><th>Cliente</th><th>Status</th><th>Descrição</th><th>Linha do Tempo</th><th>Ações</th></tr>';
             lista.forEach(p => {
                 const timeline = dados.timeline.filter(t => t.processoId == p.id);
                 html += `<tr>
@@ -491,7 +552,7 @@
                     <td>${p.status}</td>
                     <td>${p.descricao}</td>
                     <td>
-                        <button onclick="verTimeline(${p.id})">📜 Ver (${timeline.length})</button>
+                        <button class="edit-btn" onclick="verTimeline(${p.id})">📜 Ver (${timeline.length})</button>
                     </td>
                     <td>
                         <button class="edit-btn" onclick="editarProcesso(${p.id})">✏️</button>
@@ -509,7 +570,12 @@
                 lista = lista.filter(h => getPessoaNome(h.pessoaId).toLowerCase().includes(filtro.toLowerCase()));
             }
             
-            let html = '<table><tr><th>Cliente</th><th>Valor Total</th><th>Parcelas</th><th>Pagas</th><th>Valor Parcela</th><th>Saldo Devedor</th><th>Vencimento (Dia)</th><th>Ações</th></tr>';
+            if(lista.length === 0) {
+                document.getElementById("honorariosList").innerHTML = '<p style="color:#ddd; text-align:center;">Nenhum honorário cadastrado. Clique em "+ Lançar Honorário" para começar.</p>';
+                return;
+            }
+            
+            let html = '<tr><tr><th>Cliente</th><th>Valor Total</th><th>Parcelas</th><th>Pagas</th><th>Valor Parcela</th><th>Saldo Devedor</th><th>Vencimento (Dia)</th><th>Ações</th></tr>';
             lista.forEach(h => {
                 const valorParcela = h.valorTotal / h.parcelas;
                 const saldo = valorParcela * (h.parcelas - h.parcelasPagas);
@@ -534,33 +600,35 @@
         function renderizarVencimentos() {
             const hoje = new Date();
             const diaAtual = hoje.getDate();
-            const mesAtual = hoje.getMonth() + 1;
             
             let proximos = [];
             dados.honorarios.forEach(h => {
                 const pessoa = dados.pessoas.find(p => p.id == h.pessoaId);
-                const valorParcela = h.valorTotal / h.parcelas;
-                const parcelasRestantes = h.parcelas - h.parcelasPagas;
-                if(parcelasRestantes > 0) {
-                    let venceHoje = (h.vencimentoDia == diaAtual);
-                    let venceProximos = (h.vencimentoDia >= diaAtual && h.vencimentoDia <= diaAtual + 7);
-                    proximos.push({
-                        cliente: pessoa.nome,
-                        valor: valorParcela,
-                        vencimentoDia: h.vencimentoDia,
-                        parcelasRestantes: parcelasRestantes,
-                        alerta: venceHoje ? "VENCE HOJE!" : (venceProximos ? "Vence em breve" : "Normal")
-                    });
+                if(pessoa) {
+                    const valorParcela = h.valorTotal / h.parcelas;
+                    const parcelasRestantes = h.parcelas - h.parcelasPagas;
+                    if(parcelasRestantes > 0) {
+                        let venceHoje = (h.vencimentoDia == diaAtual);
+                        let venceProximos = (h.vencimentoDia >= diaAtual && h.vencimentoDia <= diaAtual + 7);
+                        proximos.push({
+                            cliente: pessoa.nome,
+                            valor: valorParcela,
+                            vencimentoDia: h.vencimentoDia,
+                            parcelasRestantes: parcelasRestantes,
+                            alerta: venceHoje ? "🔴 VENCE HOJE!" : (venceProximos ? "🟡 Vence em breve" : "🟢 Normal")
+                        });
+                    }
                 }
             });
             
-            let html = '<h3>📅 Próximos Vencimentos</h3>';
+            let html = '<h3 style="color:#ffd700;">📅 Próximos Vencimentos</h3>';
             if(proximos.length === 0) {
-                html += '<p>Nenhum vencimento pendente.</p>';
+                html += '<p style="color:#ddd;">Nenhum vencimento pendente.</p>';
             } else {
                 html += '<table><tr><th>Cliente</th><th>Valor da Parcela</th><th>Dia Vencimento</th><th>Parcelas Restantes</th><th>Alerta</th></tr>';
                 proximos.forEach(p => {
-                    html += `<tr style="${p.alerta === 'VENCE HOJE!' ? 'background: #ffeb3b' : ''}">
+                    let cor = p.alerta.includes("HOJE") ? "#ff4444" : (p.alerta.includes("breve") ? "#ffaa00" : "transparent");
+                    html += `<tr style="background: ${cor}; color: ${cor === "#ff4444" ? "white" : "#ddd"}">
                         <td>${p.cliente}</td>
                         <td>R$ ${p.valor.toFixed(2)}</td>
                         <td>Dia ${p.vencimentoDia}</td>
@@ -580,9 +648,13 @@
             currentModalType = "pessoa";
             document.getElementById("modalTitle").innerText = "Editar Pessoa";
             document.getElementById("modalBody").innerHTML = `
+                <label>Nome completo:</label>
                 <input type="text" id="nome" value="${pessoa.nome}" placeholder="Nome">
+                <label>Tipo:</label>
                 <select id="tipo"><option ${pessoa.tipo=="Física"?"selected":""}>Física</option><option ${pessoa.tipo=="Jurídica"?"selected":""}>Jurídica</option></select>
+                <label>CPF/CNPJ:</label>
                 <input type="text" id="documento" value="${pessoa.documento}" placeholder="CPF/CNPJ">
+                <label>Contato (email/telefone):</label>
                 <input type="text" id="contato" value="${pessoa.contato || ''}" placeholder="Contato">
             `;
             document.getElementById("modal").style.display = "flex";
@@ -594,15 +666,21 @@
             currentModalType = "processo";
             document.getElementById("modalTitle").innerText = "Editar Processo";
             document.getElementById("modalBody").innerHTML = `
+                <label>Número do processo:</label>
                 <input type="text" id="numero" value="${proc.numero}" placeholder="Número do Processo">
+                <label>Cliente:</label>
                 <select id="clienteId">${dados.pessoas.map(p => `<option ${p.id==proc.clienteId?"selected":""} value="${p.id}">${p.nome}</option>`).join('')}</select>
+                <label>Status:</label>
                 <input type="text" id="status" value="${proc.status}" placeholder="Status">
+                <label>Descrição:</label>
                 <textarea id="descricao" placeholder="Descrição">${proc.descricao}</textarea>
-                <hr><h4>Adicionar à Linha do Tempo</h4>
+                <hr style="margin:15px 0; border-color:#333;">
+                <h4 style="color:#ffd700;">📌 Linha do Tempo</h4>
+                <div id="timelineList"></div>
+                <label>Adicionar novo evento:</label>
                 <input type="date" id="timelineData">
                 <input type="text" id="timelineDesc" placeholder="Descrição do evento">
-                <button onclick="adicionarTimeline(${id})">+ Adicionar Evento</button>
-                <div id="timelineList"></div>
+                <button onclick="adicionarTimeline(${id})" style="background:#ffd700; color:#000; border:none; padding:8px; border-radius:6px; cursor:pointer;">+ Adicionar</button>
             `;
             document.getElementById("modal").style.display = "flex";
             renderizarTimelineModal(id);
@@ -610,11 +688,15 @@
 
         function renderizarTimelineModal(processoId) {
             const eventos = dados.timeline.filter(t => t.processoId == processoId);
-            let html = '<ul>';
-            eventos.forEach(e => {
-                html += `<li>${e.data} - ${e.descricao} <button onclick="excluirTimeline(${e.id})">❌</button></li>`;
+            let html = '<ul style="list-style:none; padding:0;">';
+            eventos.sort((a,b)=>a.data.localeCompare(b.data)).forEach(e => {
+                html += `<li style="background:#0a0a0a; padding:8px; margin:5px 0; border-left:3px solid #ffd700; border-radius:4px;">
+                    <strong>${e.data}</strong> - ${e.descricao}
+                    <button onclick="excluirTimeline(${e.id})" style="float:right; background:#dc3545; color:white; border:none; border-radius:4px; padding:2px 8px; cursor:pointer;">❌</button>
+                </li>`;
             });
             html += '</ul>';
+            if(eventos.length === 0) html = '<p style="color:#ddd;">Nenhum evento na linha do tempo ainda.</p>';
             const timelineDiv = document.getElementById("timelineList");
             if(timelineDiv) timelineDiv.innerHTML = html;
         }
@@ -623,30 +705,37 @@
             const data = document.getElementById("timelineData").value;
             const desc = document.getElementById("timelineDesc").value;
             if(data && desc) {
-                const newId = Math.max(0, ...dados.timeline.map(t => t.id), 0) + 1;
+                const newId = dados.timeline.length > 0 ? Math.max(...dados.timeline.map(t => t.id)) + 1 : 1;
                 dados.timeline.push({ id: newId, processoId: processoId, data: data, descricao: desc });
                 salvarDados();
                 renderizarTimelineModal(processoId);
                 document.getElementById("timelineData").value = "";
                 document.getElementById("timelineDesc").value = "";
+                mostrarSucesso();
+            } else {
+                alert("Preencha a data e a descrição do evento!");
             }
         }
 
         function excluirTimeline(id) {
-            dados.timeline = dados.timeline.filter(t => t.id != id);
-            salvarDados();
-            if(currentEditId && currentModalType=="processo") renderizarTimelineModal(currentEditId);
+            if(confirm("Remover este evento da linha do tempo?")) {
+                dados.timeline = dados.timeline.filter(t => t.id != id);
+                salvarDados();
+                if(currentEditId && currentModalType=="processo") renderizarTimelineModal(currentEditId);
+            }
         }
 
         function verTimeline(processoId) {
             const eventos = dados.timeline.filter(t => t.processoId == processoId).sort((a,b)=>a.data.localeCompare(b.data));
-            let html = '<div class="timeline"><h4>Linha do Tempo</h4>';
-            eventos.forEach(e => {
-                html += `<div class="timeline-item"><strong>${e.data}</strong><br>${e.descricao}</div>`;
-            });
-            html += '</div>';
-            alert(html);
-            // Poderia abrir um modal, mas pra simplificar usei alert
+            let msg = "📜 LINHA DO TEMPO DO PROCESSO\n\n";
+            if(eventos.length === 0) {
+                msg += "Nenhum evento registrado ainda.";
+            } else {
+                eventos.forEach(e => {
+                    msg += `${e.data} - ${e.descricao}\n`;
+                });
+            }
+            alert(msg);
         }
 
         function editarHonorario(id) {
@@ -655,17 +744,22 @@
             currentModalType = "honorario";
             document.getElementById("modalTitle").innerText = "Editar Honorário";
             document.getElementById("modalBody").innerHTML = `
+                <label>Cliente:</label>
                 <select id="pessoaId">${dados.pessoas.map(p => `<option ${p.id==honor.pessoaId?"selected":""} value="${p.id}">${p.nome}</option>`).join('')}</select>
+                <label>Valor Total (R$):</label>
                 <input type="number" id="valorTotal" value="${honor.valorTotal}" placeholder="Valor Total">
+                <label>Número de Parcelas:</label>
                 <input type="number" id="parcelas" value="${honor.parcelas}" placeholder="Número de Parcelas">
+                <label>Parcelas Pagas:</label>
                 <input type="number" id="parcelasPagas" value="${honor.parcelasPagas}" placeholder="Parcelas Pagas">
-                <input type="number" id="vencimentoDia" value="${honor.vencimentoDia}" placeholder="Dia de Vencimento (1-31)">
+                <label>Dia de Vencimento (1-31):</label>
+                <input type="number" id="vencimentoDia" value="${honor.vencimentoDia}" placeholder="Dia de Vencimento">
             `;
             document.getElementById("modal").style.display = "flex";
         }
 
         function excluirPessoa(id) {
-            if(confirm("Excluir esta pessoa? Processos e honorários vinculados também serão removidos.")) {
+            if(confirm("Excluir esta pessoa? TODOS os processos e honorários vinculados também serão removidos!")) {
                 dados.pessoas = dados.pessoas.filter(p => p.id != id);
                 dados.processos = dados.processos.filter(p => p.clienteId != id);
                 dados.honorarios = dados.honorarios.filter(h => h.pessoaId != id);
@@ -675,7 +769,7 @@
         }
 
         function excluirProcesso(id) {
-            if(confirm("Excluir este processo?")) {
+            if(confirm("Excluir este processo? A linha do tempo também será removida!")) {
                 dados.processos = dados.processos.filter(p => p.id != id);
                 dados.timeline = dados.timeline.filter(t => t.processoId != id);
                 salvarDados();
@@ -697,62 +791,116 @@
                 const tipo = document.getElementById("tipo").value;
                 const documento = document.getElementById("documento").value;
                 const contato = document.getElementById("contato").value;
+                
+                if(!nome || !documento) {
+                    alert("Preencha o nome e o documento!");
+                    return;
+                }
+                
                 if(currentEditId) {
                     const idx = dados.pessoas.findIndex(p => p.id == currentEditId);
                     dados.pessoas[idx] = { ...dados.pessoas[idx], nome, tipo, documento, contato };
+                } else {
+                    const newId = dados.pessoas.length > 0 ? Math.max(...dados.pessoas.map(p => p.id)) + 1 : 1;
+                    dados.pessoas.push({ id: newId, nome, tipo, documento, contato });
                 }
-            } else if(currentModalType === "processo") {
+                salvarDados();
+                renderizarPessoas();
+            } 
+            else if(currentModalType === "processo") {
                 const numero = document.getElementById("numero").value;
                 const clienteId = parseInt(document.getElementById("clienteId").value);
                 const status = document.getElementById("status").value;
                 const descricao = document.getElementById("descricao").value;
+                
+                if(!numero || !clienteId) {
+                    alert("Preencha o número do processo e selecione um cliente!");
+                    return;
+                }
+                
                 if(currentEditId) {
                     const idx = dados.processos.findIndex(p => p.id == currentEditId);
                     dados.processos[idx] = { ...dados.processos[idx], numero, clienteId, status, descricao };
+                } else {
+                    const newId = dados.processos.length > 0 ? Math.max(...dados.processos.map(p => p.id)) + 1 : 1;
+                    dados.processos.push({ id: newId, numero, clienteId, status, descricao });
                 }
-            } else if(currentModalType === "honorario") {
+                salvarDados();
+                renderizarProcessos();
+            } 
+            else if(currentModalType === "honorario") {
                 const pessoaId = parseInt(document.getElementById("pessoaId").value);
                 const valorTotal = parseFloat(document.getElementById("valorTotal").value);
                 const parcelas = parseInt(document.getElementById("parcelas").value);
                 const parcelasPagas = parseInt(document.getElementById("parcelasPagas").value);
                 const vencimentoDia = parseInt(document.getElementById("vencimentoDia").value);
+                
+                if(!pessoaId || !valorTotal || !parcelas || !vencimentoDia) {
+                    alert("Preencha todos os campos!");
+                    return;
+                }
+                
                 if(currentEditId) {
                     const idx = dados.honorarios.findIndex(h => h.id == currentEditId);
                     dados.honorarios[idx] = { ...dados.honorarios[idx], pessoaId, valorTotal, parcelas, parcelasPagas, vencimentoDia };
+                } else {
+                    const newId = dados.honorarios.length > 0 ? Math.max(...dados.honorarios.map(h => h.id)) + 1 : 1;
+                    dados.honorarios.push({ id: newId, pessoaId, valorTotal, parcelas, parcelasPagas, vencimentoDia });
                 }
+                salvarDados();
+                renderizarHonorarios();
             }
-            salvarDados();
+            
             closeModal();
-            renderizarTudo();
+            renderizarVencimentos();
         }
 
         function openModal(type) {
             currentEditId = null;
             currentModalType = type;
+            
+            if(dados.pessoas.length === 0 && (type === "processo" || type === "honorario")) {
+                alert("Antes de cadastrar um processo ou honorário, cadastre pelo menos uma pessoa!");
+                return;
+            }
+            
             if(type === "pessoa") {
-                document.getElementById("modalTitle").innerText = "Nova Pessoa";
+                document.getElementById("modalTitle").innerText = "➕ Nova Pessoa";
                 document.getElementById("modalBody").innerHTML = `
-                    <input type="text" id="nome" placeholder="Nome">
+                    <label>Nome completo:</label>
+                    <input type="text" id="nome" placeholder="Ex: João Silva">
+                    <label>Tipo:</label>
                     <select id="tipo"><option>Física</option><option>Jurídica</option></select>
-                    <input type="text" id="documento" placeholder="CPF/CNPJ">
-                    <input type="text" id="contato" placeholder="Contato">
+                    <label>CPF/CNPJ:</label>
+                    <input type="text" id="documento" placeholder="Ex: 123.456.789-00">
+                    <label>Contato (email/telefone):</label>
+                    <input type="text" id="contato" placeholder="Ex: (11) 99999-9999">
                 `;
             } else if(type === "processo") {
-                document.getElementById("modalTitle").innerText = "Novo Processo";
+                document.getElementById("modalTitle").innerText = "➕ Novo Processo";
                 document.getElementById("modalBody").innerHTML = `
-                    <input type="text" id="numero" placeholder="Número do Processo">
+                    <label>Número do processo:</label>
+                    <input type="text" id="numero" placeholder="Ex: 1234/2024">
+                    <label>Cliente:</label>
                     <select id="clienteId">${dados.pessoas.map(p => `<option value="${p.id}">${p.nome}</option>`).join('')}</select>
-                    <input type="text" id="status" placeholder="Status">
-                    <textarea id="descricao" placeholder="Descrição"></textarea>
+                    <label>Status:</label>
+                    <input type="text" id="status" placeholder="Ex: Em andamento, Arquivado...">
+                    <label>Descrição:</label>
+                    <textarea id="descricao" placeholder="Descrição do processo"></textarea>
                 `;
             } else if(type === "honorario") {
-                document.getElementById("modalTitle").innerText = "Lançar Honorário";
+                document.getElementById("modalTitle").innerText = "💰 Lançar Honorário";
                 document.getElementById("modalBody").innerHTML = `
+                    <label>Cliente:</label>
                     <select id="pessoaId">${dados.pessoas.map(p => `<option value="${p.id}">${p.nome}</option>`).join('')}</select>
-                    <input type="number" id="valorTotal" placeholder="Valor Total">
-                    <input type="number" id="parcelas" placeholder="Número de Parcelas">
-                    <input type="number" id="parcelasPagas" placeholder="Parcelas Pagas (0 se nenhuma)">
-                    <input type="number" id="vencimentoDia" placeholder="Dia de Vencimento (1-31)">
+                    <label>Valor Total (R$):</label>
+                    <input type="number" id="valorTotal" placeholder="Ex: 5000">
+                    <label>Número de Parcelas:</label>
+                    <input type="number" id="parcelas" placeholder="Ex: 10">
+                    <label>Parcelas Pagas:</label>
+                    <input type="number" id="parcelasPagas" value="0" placeholder="Ex: 3">
+                    <label>Dia de Vencimento (1-31):</label>
+                    <input type="number" id="vencimentoDia" placeholder="Ex: 27">
                 `;
             }
             document.getElementById("modal").style.display = "flex";
