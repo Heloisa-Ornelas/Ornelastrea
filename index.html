@@ -186,7 +186,7 @@
             background: #008833;
         }
 
-        /* CARDS - novo estilo para pessoas */
+        /* CARDS - estilo para todos */
         .cards-container {
             display: flex;
             flex-direction: column;
@@ -261,7 +261,7 @@
             margin-top: 5px;
         }
 
-        .edit-btn, .delete-btn {
+        .edit-btn, .delete-btn, .view-btn {
             padding: 6px 12px;
             border: none;
             border-radius: 6px;
@@ -279,30 +279,88 @@
             color: white;
         }
 
-        /* TABELAS para processos e honorários */
-        table {
+        .view-btn {
+            background: #17a2b8;
+            color: white;
+        }
+
+        /* Modal de linha do tempo */
+        .timeline-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
         }
 
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #333;
-            color: #ddd;
+        .timeline-modal-content {
+            background: #1a1a1a;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 2px solid #ffd700;
         }
 
-        th {
-            background: #0a0a0a;
-            font-weight: bold;
+        .timeline-modal-header {
+            background: #000;
+            padding: 20px;
+            border-bottom: 1px solid #ffd700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .timeline-modal-header h3 {
             color: #ffd700;
         }
 
-        tr:hover {
-            background: #2a2a2a;
+        .close-timeline {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
         }
 
+        .timeline-modal-body {
+            padding: 20px;
+        }
+
+        .timeline-event {
+            background: #0a0a0a;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 3px solid #ffd700;
+            border-radius: 8px;
+        }
+
+        .timeline-date {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .timeline-desc {
+            color: white;
+            margin-top: 5px;
+        }
+
+        .empty-timeline {
+            color: #888;
+            text-align: center;
+            padding: 40px;
+        }
+
+        /* Modal padrão */
         .modal {
             display: none;
             position: fixed;
@@ -352,21 +410,6 @@
             margin-top: 10px;
         }
 
-        .timeline {
-            background: #0a0a0a;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 10px;
-        }
-
-        .timeline-item {
-            padding: 10px;
-            border-left: 3px solid #ffd700;
-            margin-left: 20px;
-            margin-bottom: 10px;
-            color: #ddd;
-        }
-
         .sucesso {
             background: #00aa44;
             color: white;
@@ -385,6 +428,12 @@
             text-align: center;
             padding: 40px;
             font-style: italic;
+        }
+
+        .valor-destaque {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 16px;
         }
 
         @media (max-width: 768px) {
@@ -408,6 +457,18 @@
 
     <!-- Mensagem de sucesso -->
     <div class="sucesso" id="msgSucesso">✅ Salvo com sucesso!</div>
+
+    <!-- Modal de Linha do Tempo -->
+    <div class="timeline-modal" id="timelineModal">
+        <div class="timeline-modal-content">
+            <div class="timeline-modal-header">
+                <h3 id="timelineModalTitle">📜 Linha do Tempo</h3>
+                <button class="close-timeline" onclick="fecharTimelineModal()">✕ Fechar</button>
+            </div>
+            <div class="timeline-modal-body" id="timelineModalBody">
+            </div>
+        </div>
+    </div>
 
     <!-- Sistema Principal -->
     <div class="main-container" id="mainScreen">
@@ -470,10 +531,8 @@
     </div>
 
     <script>
-        // SENHA
         const SENHA = "heloisa01";
 
-        // DADOS
         let dados = {
             pessoas: [],
             processos: [],
@@ -484,7 +543,7 @@
         let currentEditId = null;
         let currentModalType = null;
 
-        // FUNÇÕES DE FORMATAÇÃO AUTOMÁTICA
+        // FUNÇÕES DE FORMATAÇÃO
         function formatarCPF(cpf) {
             cpf = cpf.replace(/\D/g, '');
             if (cpf.length === 11) {
@@ -548,6 +607,7 @@
                 
                 dados.timeline.push({ id: 1, processoId: 1, data: "2024-01-10", descricao: "Petição inicial protocolada" });
                 dados.timeline.push({ id: 2, processoId: 1, data: "2024-02-15", descricao: "Citação realizada" });
+                dados.timeline.push({ id: 3, processoId: 2, data: "2024-01-20", descricao: "Contestação apresentada" });
                 
                 salvarDados();
             }
@@ -583,7 +643,6 @@
             document.getElementById("passwordInput").value = "";
         }
 
-        // Abas
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', () => {
                 const tabId = tab.dataset.tab;
@@ -607,7 +666,7 @@
             return pessoa ? pessoa.nome : "N/A";
         }
 
-        // RENDERIZAR PESSOAS EM CARDS (sem cabeçalho de tabela)
+        // PESSOAS EM CARDS
         function renderizarPessoas(filtro = "") {
             let lista = dados.pessoas;
             if(filtro) {
@@ -625,7 +684,6 @@
                 const honorarios = dados.honorarios.filter(h => h.pessoaId == p.id);
                 const totalDevido = honorarios.reduce((acc, h) => acc + ((h.valorTotal / h.parcelas) * (h.parcelas - h.parcelasPagas)), 0);
                 
-                // Aplicar formatação ao exibir
                 const docFormatado = formatarDocumento(p.documento, p.tipo);
                 const contatoFormatado = formatarContato(p.contato);
                 
@@ -650,7 +708,7 @@
                             </div>
                             <div class="info-item">
                                 <span class="info-label">💰 Honorários Devidos:</span>
-                                <span class="info-value">R$ ${totalDevido.toFixed(2)}</span>
+                                <span class="info-value valor-destaque">R$ ${totalDevido.toFixed(2)}</span>
                             </div>
                         </div>
                         <div class="card-acoes">
@@ -664,6 +722,7 @@
             document.getElementById("pessoasList").innerHTML = html;
         }
 
+        // PROCESSOS EM CARDS
         function renderizarProcessos(filtro = "") {
             let lista = dados.processos;
             if(filtro) {
@@ -675,25 +734,44 @@
                 return;
             }
             
-            let html = '<table><tr><th>Número</th><th>Cliente</th><th>Status</th><th>Descrição</th><th>Linha do Tempo</th><th>Ações</th></tr>';
+            let html = '<div class="cards-container">';
             lista.forEach(p => {
                 const timeline = dados.timeline.filter(t => t.processoId == p.id);
-                html += `<tr>
-                    <td>${p.numero}</td>
-                    <td>${getPessoaNome(p.clienteId)}</td>
-                    <td>${p.status}</td>
-                    <td>${p.descricao}</td>
-                    <td><button class="edit-btn" onclick="verTimeline(${p.id})">📜 Ver (${timeline.length})</button></td>
-                    <td>
-                        <button class="edit-btn" onclick="editarProcesso(${p.id})">✏️</button>
-                        <button class="delete-btn" onclick="excluirProcesso(${p.id})">🗑️</button>
-                    </td>
-                </tr>`;
+                const cliente = dados.pessoas.find(pessoa => pessoa.id == p.clienteId);
+                
+                html += `
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-nome">📋 Processo ${p.numero}</span>
+                            <span class="card-tipo">${p.status}</span>
+                        </div>
+                        <div class="card-info">
+                            <div class="info-item">
+                                <span class="info-label">👤 Cliente:</span>
+                                <span class="info-value">${cliente ? cliente.nome : 'N/A'}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">📝 Descrição:</span>
+                                <span class="info-value">${p.descricao || '-'}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">📅 Eventos na linha do tempo:</span>
+                                <span class="info-value">${timeline.length} evento(s)</span>
+                            </div>
+                        </div>
+                        <div class="card-acoes">
+                            <button class="view-btn" onclick="verTimelineModal(${p.id}, '${p.numero}')">📜 Ver Linha do Tempo</button>
+                            <button class="edit-btn" onclick="editarProcesso(${p.id})">✏️ Editar</button>
+                            <button class="delete-btn" onclick="excluirProcesso(${p.id})">🗑️ Excluir</button>
+                        </div>
+                    </div>
+                `;
             });
-            html += '</table>';
+            html += '</div>';
             document.getElementById("processosList").innerHTML = html;
         }
 
+        // HONORÁRIOS EM CARDS
         function renderizarHonorarios(filtro = "") {
             let lista = dados.honorarios;
             if(filtro) {
@@ -705,28 +783,57 @@
                 return;
             }
             
-            let html = 'ables style="width:100%">\n<thead>\n<th>Cliente</th><th>Valor Total</th><th>Parcelas</th><th>Pagas</th><th>Valor Parcela</th><th>Saldo Devedor</th><th>Vencimento</th><th>Ações</th>\n</thead>\n<tbody>';
+            let html = '<div class="cards-container">';
             lista.forEach(h => {
+                const pessoa = dados.pessoas.find(p => p.id == h.pessoaId);
                 const valorParcela = h.valorTotal / h.parcelas;
                 const saldo = valorParcela * (h.parcelas - h.parcelasPagas);
-                html += `<tr>
-                    <td>${getPessoaNome(h.pessoaId)}</td>
-                    <td>R$ ${h.valorTotal.toFixed(2)}</td>
-                    <td>${h.parcelas}</td>
-                    <td>${h.parcelasPagas}</td>
-                    <td>R$ ${valorParcela.toFixed(2)}</td>
-                    <td><strong style="color:#ffd700;">R$ ${saldo.toFixed(2)}</strong></td>
-                    <td>Dia ${h.vencimentoDia}</td>
-                    <td>
-                        <button class="edit-btn" onclick="editarHonorario(${h.id})">✏️</button>
-                        <button class="delete-btn" onclick="excluirHonorario(${h.id})">🗑️</button>
-                    </td>
-                </tr>`;
+                const parcelasRestantes = h.parcelas - h.parcelasPagas;
+                
+                html += `
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-nome">💰 Honorários - ${pessoa ? pessoa.nome : 'N/A'}</span>
+                            <span class="card-tipo">${parcelasRestantes > 0 ? 'Pendente' : 'Quitado'}</span>
+                        </div>
+                        <div class="card-info">
+                            <div class="info-item">
+                                <span class="info-label">💵 Valor Total:</span>
+                                <span class="info-value">R$ ${h.valorTotal.toFixed(2)}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">📊 Parcelas:</span>
+                                <span class="info-value">${h.parcelas} x R$ ${valorParcela.toFixed(2)}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">✅ Pagas:</span>
+                                <span class="info-value">${h.parcelasPagas} de ${h.parcelas}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">⚠️ Saldo Devedor:</span>
+                                <span class="info-value valor-destaque">R$ ${saldo.toFixed(2)}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">📅 Vencimento:</span>
+                                <span class="info-value">Dia ${h.vencimentoDia} de cada mês</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">🔄 Parcelas Restantes:</span>
+                                <span class="info-value">${parcelasRestantes}</span>
+                            </div>
+                        </div>
+                        <div class="card-acoes">
+                            <button class="edit-btn" onclick="editarHonorario(${h.id})">✏️ Editar</button>
+                            <button class="delete-btn" onclick="excluirHonorario(${h.id})">🗑️ Excluir</button>
+                        </div>
+                    </div>
+                `;
             });
-            html += '</tbody></table>';
+            html += '</div>';
             document.getElementById("honorariosList").innerHTML = html;
         }
 
+        // VENCIMENTOS EM CARDS
         function renderizarVencimentos() {
             const hoje = new Date();
             const diaAtual = hoje.getDate();
@@ -740,38 +847,101 @@
                     if(parcelasRestantes > 0) {
                         let venceHoje = (h.vencimentoDia == diaAtual);
                         let venceProximos = (h.vencimentoDia >= diaAtual && h.vencimentoDia <= diaAtual + 7);
+                        let status = "";
+                        let corStatus = "";
+                        if(venceHoje) {
+                            status = "🔴 VENCE HOJE!";
+                            corStatus = "#8b0000";
+                        } else if(venceProximos) {
+                            status = "🟡 Vence em breve";
+                            corStatus = "#886600";
+                        } else {
+                            status = "🟢 Normal";
+                            corStatus = "#0a0a0a";
+                        }
+                        
                         proximos.push({
                             cliente: pessoa.nome,
                             valor: valorParcela,
                             vencimentoDia: h.vencimentoDia,
                             parcelasRestantes: parcelasRestantes,
-                            alerta: venceHoje ? "🔴 VENCE HOJE!" : (venceProximos ? "🟡 Vence em breve" : "🟢 Normal")
+                            alerta: status,
+                            cor: corStatus
                         });
                     }
                 }
             });
             
-            let html = '<h3 style="color:#ffd700; margin-bottom:20px;">📅 Próximos Vencimentos</h3>';
             if(proximos.length === 0) {
-                html += '<div class="empty-message">Nenhum vencimento pendente.</div>';
-            } else {
-                html += 'able style="width:100%">\n<thead>\n<th>Cliente</th><th>Valor da Parcela</th><th>Dia Vencimento</th><th>Parcelas Restantes</th><th>Alerta</th>\n</thead>\n<tbody>';
-                proximos.forEach(p => {
-                    let corFundo = p.alerta.includes("HOJE") ? "#8b0000" : (p.alerta.includes("breve") ? "#886600" : "transparent");
-                    html += `<tr style="background: ${corFundo}">
-                        <td>${p.cliente}</td>
-                        <td>R$ ${p.valor.toFixed(2)}</td>
-                        <td>Dia ${p.vencimentoDia}</td>
-                        <td>${p.parcelasRestantes}</td>
-                        <td>${p.alerta}</td>
-                    </tr>`;
-                });
-                html += '</tbody></table>';
+                document.getElementById("vencimentosList").innerHTML = '<div class="empty-message">Nenhum vencimento pendente.</div>';
+                return;
             }
+            
+            let html = '<div class="cards-container">';
+            proximos.forEach(p => {
+                html += `
+                    <div class="card" style="background: ${p.cor}; border-color: #ffd700;">
+                        <div class="card-header">
+                            <span class="card-nome">📅 ${p.cliente}</span>
+                            <span class="card-tipo">${p.alerta}</span>
+                        </div>
+                        <div class="card-info">
+                            <div class="info-item">
+                                <span class="info-label">💰 Valor da Parcela:</span>
+                                <span class="info-value valor-destaque">R$ ${p.valor.toFixed(2)}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">📅 Dia do Vencimento:</span>
+                                <span class="info-value">Dia ${p.vencimentoDia}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">🔄 Parcelas Restantes:</span>
+                                <span class="info-value">${p.parcelasRestantes}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
             document.getElementById("vencimentosList").innerHTML = html;
         }
 
-        // CRUD e outras funções (mantidas iguais)
+        // MODAL DA LINHA DO TEMPO (nova janela bonita)
+        function verTimelineModal(processoId, processoNumero) {
+            const eventos = dados.timeline.filter(t => t.processoId == processoId).sort((a,b)=>a.data.localeCompare(b.data));
+            
+            document.getElementById("timelineModalTitle").innerHTML = `📜 Linha do Tempo - Processo ${processoNumero}`;
+            
+            let bodyHtml = '';
+            if(eventos.length === 0) {
+                bodyHtml = '<div class="empty-timeline">Nenhum evento registrado na linha do tempo deste processo.</div>';
+            } else {
+                eventos.forEach(e => {
+                    bodyHtml += `
+                        <div class="timeline-event">
+                            <div class="timeline-date">📆 ${e.data}</div>
+                            <div class="timeline-desc">${e.descricao}</div>
+                        </div>
+                    `;
+                });
+            }
+            
+            document.getElementById("timelineModalBody").innerHTML = bodyHtml;
+            document.getElementById("timelineModal").style.display = "flex";
+        }
+
+        function fecharTimelineModal() {
+            document.getElementById("timelineModal").style.display = "none";
+        }
+
+        // Fechar modal ao clicar fora
+        document.getElementById("timelineModal").addEventListener('click', function(e) {
+            if(e.target === this) {
+                fecharTimelineModal();
+            }
+        });
+
+        // CRUD e outras funções
         function editarPessoa(id) {
             const pessoa = dados.pessoas.find(p => p.id == id);
             currentEditId = id;
@@ -783,7 +953,7 @@
                 <label>Tipo:</label>
                 <select id="tipo"><option ${pessoa.tipo=="Física"?"selected":""}>Física</option><option ${pessoa.tipo=="Jurídica"?"selected":""}>Jurídica</option></select>
                 <label>CPF/CNPJ (apenas números):</label>
-                <input type="text" id="documento" value="${pessoa.documento}" placeholder="Ex: 12345678900 ou 12345678000190">
+                <input type="text" id="documento" value="${pessoa.documento}" placeholder="Ex: 12345678900">
                 <label>Contato (telefone):</label>
                 <input type="text" id="contato" value="${pessoa.contato || ''}" placeholder="Ex: 41999948340">
                 <small style="color:#888;">Digite apenas números - o sistema formata automaticamente</small>
@@ -855,19 +1025,6 @@
             }
         }
 
-        function verTimeline(processoId) {
-            const eventos = dados.timeline.filter(t => t.processoId == processoId).sort((a,b)=>a.data.localeCompare(b.data));
-            let msg = "📜 LINHA DO TEMPO DO PROCESSO\n\n";
-            if(eventos.length === 0) {
-                msg += "Nenhum evento registrado ainda.";
-            } else {
-                eventos.forEach(e => {
-                    msg += `${e.data} - ${e.descricao}\n`;
-                });
-            }
-            alert(msg);
-        }
-
         function editarHonorario(id) {
             const honor = dados.honorarios.find(h => h.id == id);
             currentEditId = id;
@@ -927,7 +1084,6 @@
                     return;
                 }
                 
-                // Remove caracteres não numéricos antes de salvar
                 documento = documento.replace(/\D/g, '');
                 contato = contato ? contato.replace(/\D/g, '') : '';
                 
@@ -1006,7 +1162,7 @@
                     <label>Tipo:</label>
                     <select id="tipo"><option>Física</option><option>Jurídica</option></select>
                     <label>CPF/CNPJ (apenas números):</label>
-                    <input type="text" id="documento" placeholder="Ex: 12345678900 ou 12345678000190">
+                    <input type="text" id="documento" placeholder="Ex: 12345678900">
                     <label>Contato (telefone):</label>
                     <input type="text" id="contato" placeholder="Ex: 41999948340">
                     <small style="color:#888;">Digite apenas números - o sistema formata automaticamente</small>
