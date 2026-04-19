@@ -158,6 +158,10 @@
             color: white;
         }
 
+        .search-bar input::placeholder {
+            color: #888;
+        }
+
         .search-bar button {
             padding: 12px 24px;
             background: #ffd700;
@@ -182,6 +186,100 @@
             background: #008833;
         }
 
+        /* CARDS - novo estilo para pessoas */
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .card {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            border-color: #ffd700;
+            transform: translateX(5px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .card-nome {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .card-tipo {
+            background: #333;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #ffd700;
+        }
+
+        .card-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            color: #ddd;
+            font-size: 14px;
+        }
+
+        .info-label {
+            color: #888;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+
+        .info-value {
+            color: white;
+            font-weight: 500;
+        }
+
+        .card-acoes {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            border-top: 1px solid #333;
+            padding-top: 15px;
+            margin-top: 5px;
+        }
+
+        .edit-btn, .delete-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .edit-btn {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* TABELAS para processos e honorários */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -203,24 +301,6 @@
 
         tr:hover {
             background: #2a2a2a;
-        }
-
-        .edit-btn, .delete-btn {
-            padding: 5px 10px;
-            margin: 0 3px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .edit-btn {
-            background: #ffc107;
-            color: #000;
-        }
-
-        .delete-btn {
-            background: #dc3545;
-            color: white;
         }
 
         .modal {
@@ -262,6 +342,10 @@
             color: white;
         }
 
+        .modal-content input::placeholder {
+            color: #888;
+        }
+
         .modal-content label {
             color: #ffd700;
             display: block;
@@ -283,20 +367,11 @@
             color: #ddd;
         }
 
-        .alert {
-            background: #ffc107;
-            color: #000;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-
         .sucesso {
             background: #00aa44;
             color: white;
-            padding: 10px;
+            padding: 10px 20px;
             border-radius: 8px;
-            margin-bottom: 10px;
             text-align: center;
             position: fixed;
             bottom: 20px;
@@ -305,15 +380,19 @@
             display: none;
         }
 
+        .empty-message {
+            color: #888;
+            text-align: center;
+            padding: 40px;
+            font-style: italic;
+        }
+
         @media (max-width: 768px) {
             .tabs {
                 flex-wrap: wrap;
             }
-            table {
-                font-size: 12px;
-            }
-            td, th {
-                padding: 8px;
+            .card-info {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -391,10 +470,10 @@
     </div>
 
     <script>
-        // SENHA (agora escondida e alterada para heloisa01)
+        // SENHA
         const SENHA = "heloisa01";
 
-        // DADOS (serão salvos no localStorage)
+        // DADOS
         let dados = {
             pessoas: [],
             processos: [],
@@ -405,7 +484,48 @@
         let currentEditId = null;
         let currentModalType = null;
 
-        // Mostrar mensagem de sucesso
+        // FUNÇÕES DE FORMATAÇÃO AUTOMÁTICA
+        function formatarCPF(cpf) {
+            cpf = cpf.replace(/\D/g, '');
+            if (cpf.length === 11) {
+                return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            }
+            return cpf;
+        }
+
+        function formatarCNPJ(cnpj) {
+            cnpj = cnpj.replace(/\D/g, '');
+            if (cnpj.length === 14) {
+                return cnpj.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+            }
+            return cnpj;
+        }
+
+        function formatarTelefone(telefone) {
+            telefone = telefone.replace(/\D/g, '');
+            if (telefone.length === 11) {
+                return telefone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            } else if (telefone.length === 10) {
+                return telefone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+            }
+            return telefone;
+        }
+
+        function formatarDocumento(documento, tipo) {
+            let apenasNumeros = documento.replace(/\D/g, '');
+            if (tipo === "Física" && apenasNumeros.length === 11) {
+                return formatarCPF(documento);
+            } else if (tipo === "Jurídica" && apenasNumeros.length === 14) {
+                return formatarCNPJ(documento);
+            }
+            return documento;
+        }
+
+        function formatarContato(contato) {
+            if (!contato) return '';
+            return formatarTelefone(contato);
+        }
+
         function mostrarSucesso() {
             const msg = document.getElementById("msgSucesso");
             msg.style.display = "block";
@@ -414,13 +534,11 @@
             }, 2000);
         }
 
-        // Inicialização
         function init() {
             carregarDados();
             if(dados.pessoas.length === 0) {
-                // Dados de exemplo
-                dados.pessoas.push({ id: 1, nome: "João Silva", tipo: "Física", documento: "123.456.789-00", contato: "joao@email.com" });
-                dados.pessoas.push({ id: 2, nome: "Empresa XPTO", tipo: "Jurídica", documento: "12.345.678/0001-90", contato: "contato@xpto.com" });
+                dados.pessoas.push({ id: 1, nome: "João Silva", tipo: "Física", documento: "12345678900", contato: "11999999999" });
+                dados.pessoas.push({ id: 2, nome: "Empresa XPTO", tipo: "Jurídica", documento: "12345678000190", contato: "1133334444" });
                 
                 dados.processos.push({ id: 1, numero: "1234/2024", clienteId: 1, status: "Em andamento", descricao: "Ação trabalhista" });
                 dados.processos.push({ id: 2, numero: "5678/2024", clienteId: 2, status: "Arquivado", descricao: "Cobrança" });
@@ -430,7 +548,6 @@
                 
                 dados.timeline.push({ id: 1, processoId: 1, data: "2024-01-10", descricao: "Petição inicial protocolada" });
                 dados.timeline.push({ id: 2, processoId: 1, data: "2024-02-15", descricao: "Citação realizada" });
-                dados.timeline.push({ id: 3, processoId: 2, data: "2024-01-20", descricao: "Contestação apresentada" });
                 
                 salvarDados();
             }
@@ -490,14 +607,7 @@
             return pessoa ? pessoa.nome : "N/A";
         }
 
-        function getProcessosByPessoa(pessoaId) {
-            return dados.processos.filter(p => p.clienteId == pessoaId);
-        }
-
-        function getHonorariosByPessoa(pessoaId) {
-            return dados.honorarios.filter(h => h.pessoaId == pessoaId);
-        }
-
+        // RENDERIZAR PESSOAS EM CARDS (sem cabeçalho de tabela)
         function renderizarPessoas(filtro = "") {
             let lista = dados.pessoas;
             if(filtro) {
@@ -505,30 +615,52 @@
             }
             
             if(lista.length === 0) {
-                document.getElementById("pessoasList").innerHTML = '<p style="color:#ddd; text-align:center;">Nenhuma pessoa cadastrada. Clique em "+ Nova Pessoa" para começar.</p>';
+                document.getElementById("pessoasList").innerHTML = '<div class="empty-message">Nenhuma pessoa cadastrada. Clique em "+ Nova Pessoa" para começar.</div>';
                 return;
             }
             
-            let html = '<tr><tr><th>Nome</th><th>Tipo</th><th>Documento</th><th>Contato</th><th>Processos</th><th>Honorários</th><th>Ações</th></tr>';
+            let html = '<div class="cards-container">';
             lista.forEach(p => {
-                const processos = getProcessosByPessoa(p.id);
-                const honorarios = getHonorariosByPessoa(p.id);
+                const processos = dados.processos.filter(pr => pr.clienteId == p.id);
+                const honorarios = dados.honorarios.filter(h => h.pessoaId == p.id);
                 const totalDevido = honorarios.reduce((acc, h) => acc + ((h.valorTotal / h.parcelas) * (h.parcelas - h.parcelasPagas)), 0);
                 
-                html += `<tr>
-                    <td>${p.nome}</td>
-                    <td>${p.tipo}</td>
-                    <td>${p.documento}</td>
-                    <td>${p.contato || '-'}</td>
-                    <td>${processos.map(pr => pr.numero).join(', ') || '-'}</td>
-                    <td>R$ ${totalDevido.toFixed(2)}</td>
-                    <td>
-                        <button class="edit-btn" onclick="editarPessoa(${p.id})">✏️</button>
-                        <button class="delete-btn" onclick="excluirPessoa(${p.id})">🗑️</button>
-                    </td>
-                </tr>`;
+                // Aplicar formatação ao exibir
+                const docFormatado = formatarDocumento(p.documento, p.tipo);
+                const contatoFormatado = formatarContato(p.contato);
+                
+                html += `
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-nome">👤 ${p.nome}</span>
+                            <span class="card-tipo">${p.tipo}</span>
+                        </div>
+                        <div class="card-info">
+                            <div class="info-item">
+                                <span class="info-label">📄 Documento:</span>
+                                <span class="info-value">${docFormatado}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">📞 Contato:</span>
+                                <span class="info-value">${contatoFormatado || '-'}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">⚖️ Processos:</span>
+                                <span class="info-value">${processos.map(pr => pr.numero).join(', ') || 'Nenhum'}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">💰 Honorários Devidos:</span>
+                                <span class="info-value">R$ ${totalDevido.toFixed(2)}</span>
+                            </div>
+                        </div>
+                        <div class="card-acoes">
+                            <button class="edit-btn" onclick="editarPessoa(${p.id})">✏️ Editar</button>
+                            <button class="delete-btn" onclick="excluirPessoa(${p.id})">🗑️ Excluir</button>
+                        </div>
+                    </div>
+                `;
             });
-            html += '</table>';
+            html += '</div>';
             document.getElementById("pessoasList").innerHTML = html;
         }
 
@@ -539,11 +671,11 @@
             }
             
             if(lista.length === 0) {
-                document.getElementById("processosList").innerHTML = '<p style="color:#ddd; text-align:center;">Nenhum processo cadastrado. Clique em "+ Novo Processo" para começar.</p>';
+                document.getElementById("processosList").innerHTML = '<div class="empty-message">Nenhum processo cadastrado. Clique em "+ Novo Processo" para começar.</div>';
                 return;
             }
             
-            let html = '<tr><tr><th>Número</th><th>Cliente</th><th>Status</th><th>Descrição</th><th>Linha do Tempo</th><th>Ações</th></tr>';
+            let html = '<table><tr><th>Número</th><th>Cliente</th><th>Status</th><th>Descrição</th><th>Linha do Tempo</th><th>Ações</th></tr>';
             lista.forEach(p => {
                 const timeline = dados.timeline.filter(t => t.processoId == p.id);
                 html += `<tr>
@@ -551,9 +683,7 @@
                     <td>${getPessoaNome(p.clienteId)}</td>
                     <td>${p.status}</td>
                     <td>${p.descricao}</td>
-                    <td>
-                        <button class="edit-btn" onclick="verTimeline(${p.id})">📜 Ver (${timeline.length})</button>
-                    </td>
+                    <td><button class="edit-btn" onclick="verTimeline(${p.id})">📜 Ver (${timeline.length})</button></td>
                     <td>
                         <button class="edit-btn" onclick="editarProcesso(${p.id})">✏️</button>
                         <button class="delete-btn" onclick="excluirProcesso(${p.id})">🗑️</button>
@@ -571,11 +701,11 @@
             }
             
             if(lista.length === 0) {
-                document.getElementById("honorariosList").innerHTML = '<p style="color:#ddd; text-align:center;">Nenhum honorário cadastrado. Clique em "+ Lançar Honorário" para começar.</p>';
+                document.getElementById("honorariosList").innerHTML = '<div class="empty-message">Nenhum honorário cadastrado. Clique em "+ Lançar Honorário" para começar.</div>';
                 return;
             }
             
-            let html = '<tr><tr><th>Cliente</th><th>Valor Total</th><th>Parcelas</th><th>Pagas</th><th>Valor Parcela</th><th>Saldo Devedor</th><th>Vencimento (Dia)</th><th>Ações</th></tr>';
+            let html = 'ables style="width:100%">\n<thead>\n<th>Cliente</th><th>Valor Total</th><th>Parcelas</th><th>Pagas</th><th>Valor Parcela</th><th>Saldo Devedor</th><th>Vencimento</th><th>Ações</th>\n</thead>\n<tbody>';
             lista.forEach(h => {
                 const valorParcela = h.valorTotal / h.parcelas;
                 const saldo = valorParcela * (h.parcelas - h.parcelasPagas);
@@ -585,7 +715,7 @@
                     <td>${h.parcelas}</td>
                     <td>${h.parcelasPagas}</td>
                     <td>R$ ${valorParcela.toFixed(2)}</td>
-                    <td><strong>R$ ${saldo.toFixed(2)}</strong></td>
+                    <td><strong style="color:#ffd700;">R$ ${saldo.toFixed(2)}</strong></td>
                     <td>Dia ${h.vencimentoDia}</td>
                     <td>
                         <button class="edit-btn" onclick="editarHonorario(${h.id})">✏️</button>
@@ -593,7 +723,7 @@
                     </td>
                 </tr>`;
             });
-            html += '</table>';
+            html += '</tbody></table>';
             document.getElementById("honorariosList").innerHTML = html;
         }
 
@@ -621,14 +751,14 @@
                 }
             });
             
-            let html = '<h3 style="color:#ffd700;">📅 Próximos Vencimentos</h3>';
+            let html = '<h3 style="color:#ffd700; margin-bottom:20px;">📅 Próximos Vencimentos</h3>';
             if(proximos.length === 0) {
-                html += '<p style="color:#ddd;">Nenhum vencimento pendente.</p>';
+                html += '<div class="empty-message">Nenhum vencimento pendente.</div>';
             } else {
-                html += '<table><tr><th>Cliente</th><th>Valor da Parcela</th><th>Dia Vencimento</th><th>Parcelas Restantes</th><th>Alerta</th></tr>';
+                html += 'able style="width:100%">\n<thead>\n<th>Cliente</th><th>Valor da Parcela</th><th>Dia Vencimento</th><th>Parcelas Restantes</th><th>Alerta</th>\n</thead>\n<tbody>';
                 proximos.forEach(p => {
-                    let cor = p.alerta.includes("HOJE") ? "#ff4444" : (p.alerta.includes("breve") ? "#ffaa00" : "transparent");
-                    html += `<tr style="background: ${cor}; color: ${cor === "#ff4444" ? "white" : "#ddd"}">
+                    let corFundo = p.alerta.includes("HOJE") ? "#8b0000" : (p.alerta.includes("breve") ? "#886600" : "transparent");
+                    html += `<tr style="background: ${corFundo}">
                         <td>${p.cliente}</td>
                         <td>R$ ${p.valor.toFixed(2)}</td>
                         <td>Dia ${p.vencimentoDia}</td>
@@ -636,12 +766,12 @@
                         <td>${p.alerta}</td>
                     </tr>`;
                 });
-                html += '</table>';
+                html += '</tbody></table>';
             }
             document.getElementById("vencimentosList").innerHTML = html;
         }
 
-        // Funções CRUD
+        // CRUD e outras funções (mantidas iguais)
         function editarPessoa(id) {
             const pessoa = dados.pessoas.find(p => p.id == id);
             currentEditId = id;
@@ -652,10 +782,11 @@
                 <input type="text" id="nome" value="${pessoa.nome}" placeholder="Nome">
                 <label>Tipo:</label>
                 <select id="tipo"><option ${pessoa.tipo=="Física"?"selected":""}>Física</option><option ${pessoa.tipo=="Jurídica"?"selected":""}>Jurídica</option></select>
-                <label>CPF/CNPJ:</label>
-                <input type="text" id="documento" value="${pessoa.documento}" placeholder="CPF/CNPJ">
-                <label>Contato (email/telefone):</label>
-                <input type="text" id="contato" value="${pessoa.contato || ''}" placeholder="Contato">
+                <label>CPF/CNPJ (apenas números):</label>
+                <input type="text" id="documento" value="${pessoa.documento}" placeholder="Ex: 12345678900 ou 12345678000190">
+                <label>Contato (telefone):</label>
+                <input type="text" id="contato" value="${pessoa.contato || ''}" placeholder="Ex: 41999948340">
+                <small style="color:#888;">Digite apenas números - o sistema formata automaticamente</small>
             `;
             document.getElementById("modal").style.display = "flex";
         }
@@ -690,7 +821,7 @@
             const eventos = dados.timeline.filter(t => t.processoId == processoId);
             let html = '<ul style="list-style:none; padding:0;">';
             eventos.sort((a,b)=>a.data.localeCompare(b.data)).forEach(e => {
-                html += `<li style="background:#0a0a0a; padding:8px; margin:5px 0; border-left:3px solid #ffd700; border-radius:4px;">
+                html += `<li style="background:#0a0a0a; padding:8px; margin:5px 0; border-left:3px solid #ffd700; border-radius:4px; color:#ddd;">
                     <strong>${e.data}</strong> - ${e.descricao}
                     <button onclick="excluirTimeline(${e.id})" style="float:right; background:#dc3545; color:white; border:none; border-radius:4px; padding:2px 8px; cursor:pointer;">❌</button>
                 </li>`;
@@ -711,7 +842,6 @@
                 renderizarTimelineModal(processoId);
                 document.getElementById("timelineData").value = "";
                 document.getElementById("timelineDesc").value = "";
-                mostrarSucesso();
             } else {
                 alert("Preencha a data e a descrição do evento!");
             }
@@ -787,15 +917,19 @@
 
         function saveModal() {
             if(currentModalType === "pessoa") {
-                const nome = document.getElementById("nome").value;
-                const tipo = document.getElementById("tipo").value;
-                const documento = document.getElementById("documento").value;
-                const contato = document.getElementById("contato").value;
+                let nome = document.getElementById("nome").value;
+                let tipo = document.getElementById("tipo").value;
+                let documento = document.getElementById("documento").value;
+                let contato = document.getElementById("contato").value;
                 
                 if(!nome || !documento) {
                     alert("Preencha o nome e o documento!");
                     return;
                 }
+                
+                // Remove caracteres não numéricos antes de salvar
+                documento = documento.replace(/\D/g, '');
+                contato = contato ? contato.replace(/\D/g, '') : '';
                 
                 if(currentEditId) {
                     const idx = dados.pessoas.findIndex(p => p.id == currentEditId);
@@ -871,10 +1005,11 @@
                     <input type="text" id="nome" placeholder="Ex: João Silva">
                     <label>Tipo:</label>
                     <select id="tipo"><option>Física</option><option>Jurídica</option></select>
-                    <label>CPF/CNPJ:</label>
-                    <input type="text" id="documento" placeholder="Ex: 123.456.789-00">
-                    <label>Contato (email/telefone):</label>
-                    <input type="text" id="contato" placeholder="Ex: (11) 99999-9999">
+                    <label>CPF/CNPJ (apenas números):</label>
+                    <input type="text" id="documento" placeholder="Ex: 12345678900 ou 12345678000190">
+                    <label>Contato (telefone):</label>
+                    <input type="text" id="contato" placeholder="Ex: 41999948340">
+                    <small style="color:#888;">Digite apenas números - o sistema formata automaticamente</small>
                 `;
             } else if(type === "processo") {
                 document.getElementById("modalTitle").innerText = "➕ Novo Processo";
