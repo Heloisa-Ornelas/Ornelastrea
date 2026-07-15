@@ -8,255 +8,79 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #000;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .login-container {
-            max-width: 400px;
-            margin: 100px auto;
-            background: #1a1a1a;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-            border: 1px solid #333;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #000; min-height: 100vh; padding: 20px; }
+        .login-container { max-width: 400px; margin: 100px auto; background: #1a1a1a; border-radius: 20px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); border: 1px solid #333; }
         .login-container h1 { color: #ffd700; margin-bottom: 30px; text-align: center; }
-        .login-container input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #333;
-            border-radius: 8px;
-            font-size: 16px;
-            background: #2a2a2a;
-            color: white;
-        }
-        .login-container button {
-            width: 100%;
-            padding: 12px;
-            background: #ffd700;
-            color: #000;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 20px;
-            font-weight: bold;
-        }
+        .login-container input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #333; border-radius: 8px; font-size: 16px; background: #2a2a2a; color: white; }
+        .login-container button { width: 100%; padding: 12px; background: #ffd700; color: #000; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 20px; font-weight: bold; }
         .login-container button:hover { background: #ffed4a; }
         .error { color: #ff4444; text-align: center; margin-top: 10px; }
-
-        .main-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: #1a1a1a;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-            display: none;
-            border: 1px solid #333;
-        }
-        .header {
-            background: #000;
-            color: #ffd700;
-            padding: 20px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #ffd700;
-        }
+        .main-container { max-width: 1400px; margin: 0 auto; background: #1a1a1a; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.5); display: none; border: 1px solid #333; }
+        .header { background: #000; color: #ffd700; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ffd700; }
         .header h2 { font-size: 24px; }
-        .logout-btn {
-            background: #333;
-            border: none;
-            color: #ffd700;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
+        .logout-btn { background: #333; border: none; color: #ffd700; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
         .tabs { display: flex; background: #0a0a0a; border-bottom: 1px solid #333; }
-        .tab {
-            flex: 1;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-            color: #ccc;
-        }
+        .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; font-weight: bold; transition: all 0.3s; color: #ccc; }
         .tab.active { background: #1a1a1a; border-bottom: 3px solid #ffd700; color: #ffd700; }
         .tab-content { display: none; padding: 30px; animation: fadeIn 0.3s; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
         .search-bar { margin-bottom: 30px; display: flex; gap: 10px; flex-wrap: wrap; }
-        .search-bar input {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid #333;
-            border-radius: 8px;
-            font-size: 16px;
-            background: #2a2a2a;
-            color: white;
-        }
+        .search-bar input { flex: 1; padding: 12px; border: 1px solid #333; border-radius: 8px; font-size: 16px; background: #2a2a2a; color: white; }
         .search-bar input::placeholder { color: #888; }
-        .search-bar button {
-            padding: 12px 24px;
-            background: #ffd700;
-            color: #000;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-        }
         .add-btn { background: #00aa44; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-bottom: 20px; }
-        .add-btn:hover { background: #008833; }
-
         .cards-container { display: flex; flex-direction: column; gap: 15px; }
-        .card {
-            background: #0a0a0a;
-            border: 1px solid #333;
-            border-radius: 12px;
-            padding: 20px;
-            transition: all 0.3s;
-        }
+        .card { background: #0a0a0a; border: 1px solid #333; border-radius: 12px; padding: 20px; transition: all 0.3s; }
         .card:hover { border-color: #ffd700; transform: translateX(5px); }
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
         .card-nome { font-size: 20px; font-weight: bold; color: #ffd700; }
         .card-tipo { background: #333; padding: 4px 12px; border-radius: 20px; font-size: 12px; color: #ffd700; }
-        .card-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-            margin-bottom: 15px;
-        }
+        .card-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 15px; }
         .info-item { color: #ddd; font-size: 14px; }
         .info-label { color: #888; font-size: 12px; margin-right: 8px; }
         .info-value { color: white; font-weight: 500; }
-        .card-acoes {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            border-top: 1px solid #333;
-            padding-top: 15px;
-            margin-top: 5px;
-        }
-        .edit-btn, .delete-btn, .view-btn {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-        }
+        .card-acoes { display: flex; gap: 10px; justify-content: flex-end; border-top: 1px solid #333; padding-top: 15px; margin-top: 5px; }
+        .edit-btn, .delete-btn, .view-btn { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; }
         .edit-btn { background: #ffc107; color: #000; }
         .delete-btn { background: #dc3545; color: white; }
         .view-btn { background: #17a2b8; color: white; }
-
-        .timeline-modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
-        .timeline-modal-content {
-            background: #1a1a1a;
-            border-radius: 15px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            border: 2px solid #ffd700;
-        }
-        .timeline-modal-header {
-            background: #000;
-            padding: 20px;
-            border-bottom: 1px solid #ffd700;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .timeline-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
+        .timeline-modal-content { background: #1a1a1a; border-radius: 15px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; border: 2px solid #ffd700; }
+        .timeline-modal-header { background: #000; padding: 20px; border-bottom: 1px solid #ffd700; display: flex; justify-content: space-between; align-items: center; }
         .timeline-modal-header h3 { color: #ffd700; }
-        .close-timeline {
-            background: #dc3545; color: white; border: none;
-            padding: 5px 15px; border-radius: 5px; cursor: pointer; font-size: 16px;
-        }
+        .close-timeline { background: #dc3545; color: white; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; font-size: 16px; }
         .timeline-modal-body { padding: 20px; }
-        .timeline-event {
-            background: #0a0a0a;
-            padding: 12px;
-            margin-bottom: 10px;
-            border-left: 3px solid #ffd700;
-            border-radius: 8px;
-        }
+        .timeline-event { background: #0a0a0a; padding: 12px; margin-bottom: 10px; border-left: 3px solid #ffd700; border-radius: 8px; }
         .timeline-date { color: #ffd700; font-weight: bold; font-size: 14px; }
         .timeline-desc { color: white; margin-top: 5px; }
         .empty-timeline { color: #888; text-align: center; padding: 40px; }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background: #1a1a1a;
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            border: 1px solid #ffd700;
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: #1a1a1a; padding: 30px; border-radius: 15px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; border: 1px solid #ffd700; }
         .modal-content h3 { color: #ffd700; margin-bottom: 20px; }
-        .modal-content input, .modal-content select, .modal-content textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #333;
-            border-radius: 6px;
-            background: #2a2a2a;
-            color: white;
-        }
+        .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #333; border-radius: 6px; background: #2a2a2a; color: white; }
         .modal-content label { color: #ffd700; display: block; margin-top: 10px; }
-        .sucesso {
-            background: #00aa44; color: white; padding: 10px 20px;
-            border-radius: 8px; text-align: center;
-            position: fixed; bottom: 20px; right: 20px; z-index: 999;
-            display: none;
-        }
+        .sucesso { background: #00aa44; color: white; padding: 10px 20px; border-radius: 8px; text-align: center; position: fixed; bottom: 20px; right: 20px; z-index: 999; display: none; }
         .empty-message { color: #888; text-align: center; padding: 40px; font-style: italic; }
         .valor-destaque { color: #ffd700; font-weight: bold; font-size: 16px; }
         .vencimento-atrasado { background: #8b0000 !important; border-color: #ff4444 !important; }
         .vencimento-hoje { background: #8b0000; }
         .vencimento-proximo { background: #886600; }
-        @media (max-width: 768px) {
-            .tabs { flex-wrap: wrap; }
-            .card-info { grid-template-columns: 1fr; }
-        }
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 3000; display: none; justify-content: center; align-items: center; flex-direction: column; }
+        .spinner { border: 4px solid #333; border-top: 4px solid #ffd700; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loading-text { color: #ffd700; font-size: 18px; }
+        @media (max-width: 768px) { .tabs { flex-wrap: wrap; } .card-info { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
+    <!-- Overlay de carregamento -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Processando...</div>
+    </div>
+
     <!-- Tela de Login -->
     <div class="login-container" id="loginScreen">
         <h1>⚖️ Ornelas Advocacia</h1>
@@ -267,24 +91,10 @@
         <p style="color:#888; font-size:12px; margin-top:20px;">Acesso restrito a usuários autorizados.</p>
     </div>
 
-    <!-- Mensagem de sucesso -->
-    <div class="sucesso" id="msgSucesso">✅ Salvo com sucesso!</div>
-
-    <!-- Modal de Linha do Tempo -->
-    <div class="timeline-modal" id="timelineModal">
-        <div class="timeline-modal-content">
-            <div class="timeline-modal-header">
-                <h3 id="timelineModalTitle">📜 Linha do Tempo</h3>
-                <button class="close-timeline" onclick="fecharTimelineModal()">✕ Fechar</button>
-            </div>
-            <div class="timeline-modal-body" id="timelineModalBody"></div>
-        </div>
-    </div>
-
     <!-- Sistema Principal -->
     <div class="main-container" id="mainScreen">
         <div class="header">
-            <h2>⚖️ Ornelas Advocacia - Gestão de Processos</h2>
+            <h2>⚖️ Ornelas Advocacia</h2>
             <button class="logout-btn" id="logoutBtn">Sair</button>
         </div>
         <div class="tabs">
@@ -293,54 +103,51 @@
             <div class="tab" data-tab="honorarios">💰 Honorários</div>
             <div class="tab" data-tab="vencimentos">📅 Vencimentos</div>
         </div>
-
-        <!-- Aba Pessoas -->
         <div class="tab-content active" id="tabPessoas">
             <div class="search-bar">
-                <input type="text" id="searchPessoas" placeholder="Pesquisar por nome, CPF/CNPJ...">
-                <button class="add-btn" onclick="openModal('pessoa')">+ Nova Pessoa</button>
+                <input type="text" id="searchPessoas" placeholder="Pesquisar...">
+                <button class="add-btn" onclick="abrirModalPessoa()">+ Nova Pessoa</button>
             </div>
             <div id="pessoasList"></div>
         </div>
-
-        <!-- Aba Processos -->
         <div class="tab-content" id="tabProcessos">
             <div class="search-bar">
-                <input type="text" id="searchProcessos" placeholder="Pesquisar por número do processo, cliente...">
-                <button class="add-btn" onclick="openModal('processo')">+ Novo Processo</button>
+                <input type="text" id="searchProcessos" placeholder="Pesquisar...">
+                <button class="add-btn" onclick="abrirModalProcesso()">+ Novo Processo</button>
             </div>
             <div id="processosList"></div>
         </div>
-
-        <!-- Aba Honorários -->
         <div class="tab-content" id="tabHonorarios">
             <div class="search-bar">
-                <input type="text" id="searchHonorarios" placeholder="Pesquisar por cliente...">
-                <button class="add-btn" onclick="openModal('honorario')">+ Lançar Honorário</button>
+                <input type="text" id="searchHonorarios" placeholder="Pesquisar...">
+                <button class="add-btn" onclick="abrirModalHonorario()">+ Lançar Honorário</button>
             </div>
             <div id="honorariosList"></div>
         </div>
-
-        <!-- Aba Vencimentos -->
         <div class="tab-content" id="tabVencimentos">
             <div id="vencimentosList"></div>
         </div>
     </div>
 
     <!-- Modal Genérico -->
-    <div class="modal" id="modal">
-        <div class="modal-content">
-            <h3 id="modalTitle"></h3>
-            <div id="modalBody"></div>
-            <button onclick="closeModal()" style="margin-top: 15px; padding: 8px 16px; background:#333; color:white; border:none; border-radius:6px; cursor:pointer;">Cancelar</button>
-            <button id="saveModalBtn" style="margin-top: 15px; padding: 8px 16px; background: #00aa44; color: white; border: none; border-radius: 6px; cursor:pointer;">Salvar</button>
+    <div class="modal" id="modal"></div>
+
+    <!-- Modal de Linha do Tempo -->
+    <div class="timeline-modal" id="timelineModal">
+        <div class="timeline-modal-content">
+            <div class="timeline-modal-header">
+                <h3 id="timelineModalTitle"></h3>
+                <button class="close-timeline" onclick="fecharTimelineModal()">✕</button>
+            </div>
+            <div class="timeline-modal-body" id="timelineModalBody"></div>
         </div>
     </div>
 
+    <!-- Mensagem de sucesso -->
+    <div class="sucesso" id="msgSucesso">✅ Salvo!</div>
+
     <script>
-        // ========================
-        // CONFIGURAÇÃO DO FIREBASE
-        // ========================
+        // Configuração do Firebase (substitua pelas suas credenciais)
         const firebaseConfig = {
             apiKey: "AIzaSyBD9SAvNU-N9CZlb3skyGdNTGbNlo1YUWw",
             authDomain: "ornelastrea-7d5f4.firebaseapp.com",
@@ -352,51 +159,47 @@
             measurementId: "G-E6MGD5036D"
         };
 
-        // Inicializa o Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Estrutura de dados em memória
-        let dados = {
-            pessoas: [],
-            processos: [],
-            honorarios: [],
-            timeline: []
-        };
+        // Coleções
+        const pessoasRef = db.collection("pessoas");
+        const processosRef = db.collection("processos");
+        const honorariosRef = db.collection("honorarios");
+        const timelineRef = db.collection("timeline");
 
-        let currentEditId = null;
-        let currentModalType = null;
+        // Estado em memória (cache local)
+        let pessoas = [];
+        let processos = [];
+        let honorarios = [];
+        let timeline = [];
+
         let usuarioLogado = null;
+        let modalAtual = null; // tipo de modal aberto
 
-        // ========================
-        // AUTENTICAÇÃO
-        // ========================
+        // ------------------- AUTENTICAÇÃO -------------------
         const loginBtn = document.getElementById("loginBtn");
         loginBtn.addEventListener("click", realizarLogin);
-        document.getElementById("passwordInput").addEventListener("keypress", function(e) {
-            if (e.key === "Enter") realizarLogin();
-        });
+        document.getElementById("passwordInput").addEventListener("keypress", e => { if (e.key === "Enter") realizarLogin(); });
 
         async function realizarLogin() {
             const email = document.getElementById("emailInput").value.trim();
             const senha = document.getElementById("passwordInput").value;
             const errorDiv = document.getElementById("loginError");
-
-            if (!email || !senha) {
-                errorDiv.innerText = "Preencha e-mail e senha.";
-                return;
-            }
-
+            if (!email || !senha) { errorDiv.innerText = "Preencha e-mail e senha."; return; }
+            mostrarCarregando(true);
             try {
-                const userCredential = await auth.signInWithEmailAndPassword(email, senha);
-                usuarioLogado = userCredential.user;
+                const cred = await auth.signInWithEmailAndPassword(email, senha);
+                usuarioLogado = cred.user;
                 document.getElementById("loginScreen").style.display = "none";
                 document.getElementById("mainScreen").style.display = "block";
-                await init();
-            } catch (error) {
-                console.error(error);
+                await carregarTodosDados();
+                renderizarTudo();
+            } catch (err) {
                 errorDiv.innerText = "Falha no login. Verifique suas credenciais.";
+            } finally {
+                mostrarCarregando(false);
             }
         }
 
@@ -405,17 +208,15 @@
             usuarioLogado = null;
             document.getElementById("mainScreen").style.display = "none";
             document.getElementById("loginScreen").style.display = "block";
-            document.getElementById("emailInput").value = "";
-            document.getElementById("passwordInput").value = "";
         });
 
-        // Monitora estado de autenticação (caso a página seja recarregada)
-        auth.onAuthStateChanged(async (user) => {
+        auth.onAuthStateChanged(async user => {
             if (user) {
                 usuarioLogado = user;
                 document.getElementById("loginScreen").style.display = "none";
                 document.getElementById("mainScreen").style.display = "block";
-                await init();
+                await carregarTodosDados();
+                renderizarTudo();
             } else {
                 usuarioLogado = null;
                 document.getElementById("mainScreen").style.display = "none";
@@ -423,79 +224,46 @@
             }
         });
 
-        // ========================
-        // MANIPULAÇÃO DE DADOS NO FIRESTORE
-        // ========================
-        async function carregarDados() {
-            try {
-                const docRef = db.collection("dados").doc("principal");
-                const doc = await docRef.get();
-                if (doc.exists) {
-                    dados = doc.data();
-                    dados.pessoas = dados.pessoas || [];
-                    dados.processos = dados.processos || [];
-                    dados.honorarios = dados.honorarios || [];
-                    dados.timeline = dados.timeline || [];
-                } else {
-                    dados = { pessoas: [], processos: [], honorarios: [], timeline: [] };
-                    await docRef.set(dados);
-                }
-            } catch (error) {
-                console.error("Erro ao carregar dados:", error);
-                alert("Falha na conexão com o servidor. Tente novamente.");
-                dados = { pessoas: [], processos: [], honorarios: [], timeline: [] };
-            }
+        // ------------------- CARREGAMENTO -------------------
+        function mostrarCarregando(visivel) {
+            document.getElementById("loadingOverlay").style.display = visivel ? "flex" : "none";
         }
 
-        async function salvarDados() {
+        async function carregarTodosDados() {
+            mostrarCarregando(true);
             try {
-                const docRef = db.collection("dados").doc("principal");
-                await docRef.set(dados);
-                mostrarSucesso();
-            } catch (error) {
-                console.error("Erro ao salvar:", error);
-                alert("Erro ao salvar dados. Verifique sua conexão.");
+                const snapPessoas = await pessoasRef.get();
+                pessoas = snapPessoas.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                const snapProcessos = await processosRef.get();
+                processos = snapProcessos.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                const snapHonorarios = await honorariosRef.get();
+                honorarios = snapHonorarios.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                const snapTimeline = await timelineRef.get();
+                timeline = snapTimeline.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            } catch (err) {
+                console.error(err);
+                alert("Erro ao carregar dados.");
+            } finally {
+                mostrarCarregando(false);
             }
-        }
-
-        // ========================
-        // INICIALIZAÇÃO
-        // ========================
-        async function init() {
-            await carregarDados();
-            if (dados.pessoas.length === 0 && dados.processos.length === 0) {
-                dados.pessoas.push({ id: 1, nome: "João Silva", tipo: "Física", documento: "12345678900", contato: "11999999999" });
-                dados.pessoas.push({ id: 2, nome: "Empresa XPTO", tipo: "Jurídica", documento: "12345678000190", contato: "1133334444" });
-                dados.processos.push({ id: 1, numero: "1234/2024", clienteId: 1, status: "Em andamento", descricao: "Ação trabalhista" });
-                dados.processos.push({ id: 2, numero: "5678/2024", clienteId: 2, status: "Arquivado", descricao: "Cobrança" });
-                dados.honorarios.push({ id: 1, pessoaId: 1, valorTotal: 3000, parcelas: 3, parcelasPagas: 1, vencimentoDia: 27 });
-                dados.honorarios.push({ id: 2, pessoaId: 2, valorTotal: 5000, parcelas: 10, parcelasPagas: 5, vencimentoDia: 15 });
-                dados.timeline.push({ id: 1, processoId: 1, data: "2024-01-10", descricao: "Petição inicial protocolada" });
-                dados.timeline.push({ id: 2, processoId: 1, data: "2024-02-15", descricao: "Citação realizada" });
-                dados.timeline.push({ id: 3, processoId: 2, data: "2024-01-20", descricao: "Contestação apresentada" });
-                await salvarDados();
-            }
-            renderizarTudo();
         }
 
         function mostrarSucesso() {
             const msg = document.getElementById("msgSucesso");
             msg.style.display = "block";
-            setTimeout(() => { msg.style.display = "none"; }, 2000);
+            setTimeout(() => msg.style.display = "none", 2000);
         }
 
-        // ========================
-        // FORMATAÇÕES
-        // ========================
-        function formatarCPF(cpf) {
-            cpf = cpf.replace(/\D/g, '');
-            if (cpf.length === 11) return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-            return cpf;
+        // ------------------- FORMATAÇÕES -------------------
+        function formatarCPF(val) {
+            val = val.replace(/\D/g, '');
+            if (val.length === 11) return val.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            return val;
         }
-        function formatarCNPJ(cnpj) {
-            cnpj = cnpj.replace(/\D/g, '');
-            if (cnpj.length === 14) return cnpj.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
-            return cnpj;
+        function formatarCNPJ(val) {
+            val = val.replace(/\D/g, '');
+            if (val.length === 14) return val.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+            return val;
         }
         function formatarDocumento(doc, tipo) {
             const nums = doc.replace(/\D/g, '');
@@ -510,157 +278,119 @@
             return tel;
         }
 
-        // ========================
-        // NAVEGAÇÃO POR ABAS
-        // ========================
+        // ------------------- NAVEGAÇÃO -------------------
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', () => {
-                const tabId = tab.dataset.tab;
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
+                const tabId = tab.dataset.tab;
                 document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
                 document.getElementById(`tab${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`).classList.add('active');
                 renderizarTudo();
             });
         });
 
-        // ========================
-        // BUSCA INSTANTÂNEA
-        // ========================
-        document.getElementById("searchPessoas").addEventListener("input", function() {
-            renderizarPessoas(this.value);
-        });
-        document.getElementById("searchProcessos").addEventListener("input", function() {
-            renderizarProcessos(this.value);
-        });
-        document.getElementById("searchHonorarios").addEventListener("input", function() {
-            renderizarHonorarios(this.value);
-        });
+        document.getElementById("searchPessoas").addEventListener("input", () => renderizarPessoas());
+        document.getElementById("searchProcessos").addEventListener("input", () => renderizarProcessos());
+        document.getElementById("searchHonorarios").addEventListener("input", () => renderizarHonorarios());
 
-        // ========================
-        // RENDERIZAÇÕES
-        // ========================
         function getPessoaNome(id) {
-            const pessoa = dados.pessoas.find(p => p.id == id);
-            return pessoa ? pessoa.nome : "N/A";
+            const p = pessoas.find(p => p.id === id);
+            return p ? p.nome : "N/A";
         }
 
-        function renderizarPessoas(filtro = "") {
-            let lista = dados.pessoas;
-            if (filtro) {
-                const termo = filtro.toLowerCase();
-                lista = lista.filter(p => p.nome.toLowerCase().includes(termo) || p.documento.includes(termo));
-            }
+        // ------------------- RENDERIZAÇÕES -------------------
+        function renderizarPessoas() {
+            const filtro = document.getElementById("searchPessoas").value.toLowerCase();
+            let lista = pessoas;
+            if (filtro) lista = lista.filter(p => p.nome.toLowerCase().includes(filtro) || p.documento.includes(filtro));
             const container = document.getElementById("pessoasList");
-            if (lista.length === 0) {
+            if (!lista.length) {
                 container.innerHTML = '<div class="empty-message">Nenhuma pessoa encontrada.</div>';
                 return;
             }
             let html = '<div class="cards-container">';
             lista.forEach(p => {
-                const processos = dados.processos.filter(pr => pr.clienteId == p.id);
-                const honorarios = dados.honorarios.filter(h => h.pessoaId == p.id);
-                const totalDevido = honorarios.reduce((acc, h) => acc + ((h.valorTotal / h.parcelas) * (h.parcelas - h.parcelasPagas)), 0);
-                const docFormatado = formatarDocumento(p.documento, p.tipo);
-                const contatoFormatado = p.contato ? formatarTelefone(p.contato) : '-';
+                const procs = processos.filter(pr => pr.clienteId === p.id);
+                const hon = honorarios.filter(h => h.pessoaId === p.id);
+                const totalDevido = hon.reduce((acc, h) => acc + ((h.valorTotal / h.parcelas) * (h.parcelas - h.parcelasPagas)), 0);
+                const docFmt = formatarDocumento(p.documento, p.tipo);
+                const telFmt = p.contato ? formatarTelefone(p.contato) : '-';
                 html += `
                     <div class="card">
-                        <div class="card-header">
-                            <span class="card-nome">👤 ${p.nome}</span>
-                            <span class="card-tipo">${p.tipo}</span>
-                        </div>
+                        <div class="card-header"><span class="card-nome">👤 ${p.nome}</span><span class="card-tipo">${p.tipo}</span></div>
                         <div class="card-info">
-                            <div class="info-item"><span class="info-label">📄 Documento:</span> <span class="info-value">${docFormatado}</span></div>
-                            <div class="info-item"><span class="info-label">📞 Contato:</span> <span class="info-value">${contatoFormatado}</span></div>
-                            <div class="info-item"><span class="info-label">⚖️ Processos:</span> <span class="info-value">${processos.map(pr => pr.numero).join(', ') || 'Nenhum'}</span></div>
-                            <div class="info-item"><span class="info-label">💰 Honorários Devidos:</span> <span class="info-value valor-destaque">R$ ${totalDevido.toFixed(2)}</span></div>
+                            <div><span class="info-label">📄 Doc:</span> ${docFmt}</div>
+                            <div><span class="info-label">📞 Contato:</span> ${telFmt}</div>
+                            <div><span class="info-label">⚖️ Processos:</span> ${procs.map(pr => pr.numero).join(', ') || 'Nenhum'}</div>
+                            <div><span class="info-label">💰 Devido:</span> <span class="valor-destaque">R$ ${totalDevido.toFixed(2)}</span></div>
                         </div>
                         <div class="card-acoes">
-                            <button class="edit-btn" onclick="editarPessoa(${p.id})">✏️ Editar</button>
-                            <button class="delete-btn" onclick="excluirPessoa(${p.id})">🗑️ Excluir</button>
+                            <button class="edit-btn" onclick="editarPessoa('${p.id}')">✏️ Editar</button>
+                            <button class="delete-btn" onclick="excluirPessoa('${p.id}')">🗑️ Excluir</button>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
             html += '</div>';
             container.innerHTML = html;
         }
 
-        function renderizarProcessos(filtro = "") {
-            let lista = dados.processos;
-            if (filtro) {
-                const termo = filtro.toLowerCase();
-                lista = lista.filter(p => p.numero.includes(termo) || getPessoaNome(p.clienteId).toLowerCase().includes(termo));
-            }
+        function renderizarProcessos() {
+            const filtro = document.getElementById("searchProcessos").value.toLowerCase();
+            let lista = processos;
+            if (filtro) lista = lista.filter(p => p.numero.toLowerCase().includes(filtro) || getPessoaNome(p.clienteId).toLowerCase().includes(filtro));
             const container = document.getElementById("processosList");
-            if (lista.length === 0) {
-                container.innerHTML = '<div class="empty-message">Nenhum processo encontrado.</div>';
-                return;
-            }
+            if (!lista.length) { container.innerHTML = '<div class="empty-message">Nenhum processo.</div>'; return; }
             let html = '<div class="cards-container">';
             lista.forEach(p => {
-                const timeline = dados.timeline.filter(t => t.processoId == p.id);
-                const cliente = dados.pessoas.find(pessoa => pessoa.id == p.clienteId);
+                const cliente = pessoas.find(pe => pe.id === p.clienteId);
+                const eventos = timeline.filter(t => t.processoId === p.id);
                 html += `
                     <div class="card">
-                        <div class="card-header">
-                            <span class="card-nome">📋 Processo ${p.numero}</span>
-                            <span class="card-tipo">${p.status}</span>
-                        </div>
+                        <div class="card-header"><span class="card-nome">📋 ${p.numero}</span><span class="card-tipo">${p.status}</span></div>
                         <div class="card-info">
-                            <div class="info-item"><span class="info-label">👤 Cliente:</span> <span class="info-value">${cliente ? cliente.nome : 'N/A'}</span></div>
-                            <div class="info-item"><span class="info-label">📝 Descrição:</span> <span class="info-value">${p.descricao || '-'}</span></div>
-                            <div class="info-item"><span class="info-label">📅 Eventos:</span> <span class="info-value">${timeline.length} evento(s)</span></div>
+                            <div><span class="info-label">👤 Cliente:</span> ${cliente ? cliente.nome : 'N/A'}</div>
+                            <div><span class="info-label">📝 Descrição:</span> ${p.descricao || '-'}</div>
+                            <div><span class="info-label">📅 Eventos:</span> ${eventos.length}</div>
                         </div>
                         <div class="card-acoes">
-                            <button class="view-btn" onclick="verTimelineModal(${p.id}, '${p.numero}')">📜 Linha do Tempo</button>
-                            <button class="edit-btn" onclick="editarProcesso(${p.id})">✏️ Editar</button>
-                            <button class="delete-btn" onclick="excluirProcesso(${p.id})">🗑️ Excluir</button>
+                            <button class="view-btn" onclick="verTimelineModal('${p.id}')">📜 Linha do Tempo</button>
+                            <button class="edit-btn" onclick="editarProcesso('${p.id}')">✏️ Editar</button>
+                            <button class="delete-btn" onclick="excluirProcesso('${p.id}')">🗑️ Excluir</button>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
             html += '</div>';
             container.innerHTML = html;
         }
 
-        function renderizarHonorarios(filtro = "") {
-            let lista = dados.honorarios;
-            if (filtro) {
-                const termo = filtro.toLowerCase();
-                lista = lista.filter(h => getPessoaNome(h.pessoaId).toLowerCase().includes(termo));
-            }
+        function renderizarHonorarios() {
+            const filtro = document.getElementById("searchHonorarios").value.toLowerCase();
+            let lista = honorarios;
+            if (filtro) lista = lista.filter(h => getPessoaNome(h.pessoaId).toLowerCase().includes(filtro));
             const container = document.getElementById("honorariosList");
-            if (lista.length === 0) {
-                container.innerHTML = '<div class="empty-message">Nenhum honorário encontrado.</div>';
-                return;
-            }
+            if (!lista.length) { container.innerHTML = '<div class="empty-message">Nenhum honorário.</div>'; return; }
             let html = '<div class="cards-container">';
             lista.forEach(h => {
-                const pessoa = dados.pessoas.find(p => p.id == h.pessoaId);
+                const pessoa = pessoas.find(p => p.id === h.pessoaId);
                 const valorParcela = h.valorTotal / h.parcelas;
                 const saldo = valorParcela * (h.parcelas - h.parcelasPagas);
-                const parcelasRestantes = h.parcelas - h.parcelasPagas;
+                const restantes = h.parcelas - h.parcelasPagas;
                 html += `
                     <div class="card">
-                        <div class="card-header">
-                            <span class="card-nome">💰 Honorários - ${pessoa ? pessoa.nome : 'N/A'}</span>
-                            <span class="card-tipo">${parcelasRestantes > 0 ? 'Pendente' : 'Quitado'}</span>
-                        </div>
+                        <div class="card-header"><span class="card-nome">💰 ${pessoa ? pessoa.nome : 'N/A'}</span><span class="card-tipo">${restantes > 0 ? 'Pendente' : 'Quitado'}</span></div>
                         <div class="card-info">
-                            <div class="info-item"><span class="info-label">💵 Valor Total:</span> <span class="info-value">R$ ${h.valorTotal.toFixed(2)}</span></div>
-                            <div class="info-item"><span class="info-label">📊 Parcelas:</span> <span class="info-value">${h.parcelas} x R$ ${valorParcela.toFixed(2)}</span></div>
-                            <div class="info-item"><span class="info-label">✅ Pagas:</span> <span class="info-value">${h.parcelasPagas} de ${h.parcelas}</span></div>
-                            <div class="info-item"><span class="info-label">⚠️ Saldo Devedor:</span> <span class="info-value valor-destaque">R$ ${saldo.toFixed(2)}</span></div>
-                            <div class="info-item"><span class="info-label">📅 Vencimento:</span> <span class="info-value">Dia ${h.vencimentoDia} de cada mês</span></div>
-                            <div class="info-item"><span class="info-label">🔄 Restantes:</span> <span class="info-value">${parcelasRestantes}</span></div>
+                            <div><span class="info-label">💵 Total:</span> R$ ${h.valorTotal.toFixed(2)}</div>
+                            <div><span class="info-label">📊 Parcelas:</span> ${h.parcelas} x R$ ${valorParcela.toFixed(2)}</div>
+                            <div><span class="info-label">✅ Pagas:</span> ${h.parcelasPagas}/${h.parcelas}</div>
+                            <div><span class="info-label">⚠️ Saldo:</span> <span class="valor-destaque">R$ ${saldo.toFixed(2)}</span></div>
+                            <div><span class="info-label">📅 Venc:</span> Dia ${h.vencimentoDia}</div>
                         </div>
                         <div class="card-acoes">
-                            <button class="edit-btn" onclick="editarHonorario(${h.id})">✏️ Editar</button>
-                            <button class="delete-btn" onclick="excluirHonorario(${h.id})">🗑️ Excluir</button>
+                            <button class="edit-btn" onclick="editarHonorario('${h.id}')">✏️ Editar</button>
+                            <button class="delete-btn" onclick="excluirHonorario('${h.id}')">🗑️ Excluir</button>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
             html += '</div>';
             container.innerHTML = html;
@@ -670,341 +400,365 @@
             const hoje = new Date();
             const diaAtual = hoje.getDate();
             let itens = [];
-            dados.honorarios.forEach(h => {
-                const pessoa = dados.pessoas.find(p => p.id == h.pessoaId);
-                if (!pessoa) return;
-                const parcelasRestantes = h.parcelas - h.parcelasPagas;
-                if (parcelasRestantes <= 0) return;
+            honorarios.forEach(h => {
+                const pessoa = pessoas.find(p => p.id === h.pessoaId);
+                if (!pessoa || h.parcelas - h.parcelasPagas <= 0) return;
                 const valorParcela = h.valorTotal / h.parcelas;
-                let status = "", classeCor = "";
-                const diaVenc = h.vencimentoDia;
-                if (diaVenc < diaAtual) {
-                    status = "🔴 ATRASADO";
-                    classeCor = "vencimento-atrasado";
-                } else if (diaVenc === diaAtual) {
-                    status = "🔴 VENCE HOJE";
-                    classeCor = "vencimento-hoje";
-                } else if (diaVenc <= diaAtual + 7) {
-                    status = "🟡 Vence em breve";
-                    classeCor = "vencimento-proximo";
-                } else {
-                    status = "🟢 Normal";
-                    classeCor = "";
-                }
-                itens.push({
-                    cliente: pessoa.nome,
-                    valor: valorParcela,
-                    vencimentoDia: diaVenc,
-                    parcelasRestantes,
-                    status,
-                    classeCor
-                });
+                let status = "", classe = "";
+                if (h.vencimentoDia < diaAtual) { status = "🔴 ATRASADO"; classe = "vencimento-atrasado"; }
+                else if (h.vencimentoDia === diaAtual) { status = "🔴 VENCE HOJE"; classe = "vencimento-hoje"; }
+                else if (h.vencimentoDia <= diaAtual + 7) { status = "🟡 Em breve"; classe = "vencimento-proximo"; }
+                else { status = "🟢 Normal"; classe = ""; }
+                itens.push({ id: h.id, cliente: pessoa.nome, valor: valorParcela, vencimentoDia: h.vencimentoDia, restantes: h.parcelas - h.parcelasPagas, status, classe });
             });
             itens.sort((a,b) => {
-                const ordemStatus = { "🔴 ATRASADO": 0, "🔴 VENCE HOJE": 1, "🟡 Vence em breve": 2, "🟢 Normal": 3 };
-                return (ordemStatus[a.status] - ordemStatus[b.status]) || (a.vencimentoDia - b.vencimentoDia);
+                const ordem = { "🔴 ATRASADO":0, "🔴 VENCE HOJE":1, "🟡 Em breve":2, "🟢 Normal":3 };
+                return (ordem[a.status] - ordem[b.status]) || (a.vencimentoDia - b.vencimentoDia);
             });
             const container = document.getElementById("vencimentosList");
-            if (itens.length === 0) {
-                container.innerHTML = '<div class="empty-message">Nenhum vencimento pendente.</div>';
-                return;
-            }
+            if (!itens.length) { container.innerHTML = '<div class="empty-message">Nenhum vencimento pendente.</div>'; return; }
             let html = '<div class="cards-container">';
             itens.forEach(item => {
                 html += `
-                    <div class="card ${item.classeCor}">
-                        <div class="card-header">
-                            <span class="card-nome">📅 ${item.cliente}</span>
-                            <span class="card-tipo">${item.status}</span>
-                        </div>
+                    <div class="card ${item.classe}">
+                        <div class="card-header"><span class="card-nome">📅 ${item.cliente}</span><span class="card-tipo">${item.status}</span></div>
                         <div class="card-info">
-                            <div class="info-item"><span class="info-label">💰 Valor da Parcela:</span> <span class="info-value valor-destaque">R$ ${item.valor.toFixed(2)}</span></div>
-                            <div class="info-item"><span class="info-label">📅 Dia do Vencimento:</span> <span class="info-value">Dia ${item.vencimentoDia}</span></div>
-                            <div class="info-item"><span class="info-label">🔄 Parcelas Restantes:</span> <span class="info-value">${item.parcelasRestantes}</span></div>
+                            <div><span class="info-label">💰 Valor:</span> <span class="valor-destaque">R$ ${item.valor.toFixed(2)}</span></div>
+                            <div><span class="info-label">📅 Dia:</span> ${item.vencimentoDia}</div>
+                            <div><span class="info-label">🔄 Restantes:</span> ${item.restantes}</div>
                         </div>
-                    </div>
-                `;
+                        <div class="card-acoes">
+                            <button class="edit-btn" onclick="registrarPagamento('${item.id}')">💳 Pagar uma parcela</button>
+                        </div>
+                    </div>`;
             });
             html += '</div>';
             container.innerHTML = html;
         }
 
+        async function registrarPagamento(honorarioId) {
+            const hon = honorarios.find(h => h.id === honorarioId);
+            if (!hon) return;
+            if (hon.parcelasPagas >= hon.parcelas) {
+                alert("Honorário já quitado.");
+                return;
+            }
+            if (confirm(`Confirmar pagamento de 1 parcela para ${getPessoaNome(hon.pessoaId)}?`)) {
+                mostrarCarregando(true);
+                try {
+                    await honorariosRef.doc(honorarioId).update({ parcelasPagas: hon.parcelasPagas + 1 });
+                    await carregarTodosDados();
+                    renderizarTudo();
+                    mostrarSucesso();
+                } catch (err) {
+                    alert("Erro ao registrar pagamento.");
+                } finally {
+                    mostrarCarregando(false);
+                }
+            }
+        }
+
         function renderizarTudo() {
-            renderizarPessoas(document.getElementById("searchPessoas")?.value || "");
-            renderizarProcessos(document.getElementById("searchProcessos")?.value || "");
-            renderizarHonorarios(document.getElementById("searchHonorarios")?.value || "");
+            renderizarPessoas();
+            renderizarProcessos();
+            renderizarHonorarios();
             renderizarVencimentos();
         }
 
-        // ========================
-        // LINHA DO TEMPO (MODAL)
-        // ========================
-        function verTimelineModal(processoId, processoNumero) {
-            const eventos = dados.timeline.filter(t => t.processoId == processoId).sort((a,b)=>a.data.localeCompare(b.data));
-            document.getElementById("timelineModalTitle").innerHTML = `📜 Linha do Tempo - Processo ${processoNumero}`;
-            let bodyHtml = '';
-            if (eventos.length === 0) {
-                bodyHtml = '<div class="empty-timeline">Nenhum evento registrado.</div>';
-            } else {
-                eventos.forEach(e => {
-                    bodyHtml += `
-                        <div class="timeline-event">
-                            <div class="timeline-date">📆 ${e.data}</div>
-                            <div class="timeline-desc">${e.descricao}</div>
-                        </div>
-                    `;
-                });
-            }
-            document.getElementById("timelineModalBody").innerHTML = bodyHtml;
-            document.getElementById("timelineModal").style.display = "flex";
-        }
-        function fecharTimelineModal() {
-            document.getElementById("timelineModal").style.display = "none";
-        }
-        document.getElementById("timelineModal").addEventListener("click", function(e) {
-            if (e.target === this) fecharTimelineModal();
-        });
-
-        // ========================
-        // CRUD E MODAIS
-        // ========================
-        function openModal(type) {
-            if ((type === "processo" || type === "honorario") && dados.pessoas.length === 0) {
-                alert("Cadastre ao menos uma pessoa primeiro.");
-                return;
-            }
-            currentEditId = null;
-            currentModalType = type;
-            let title = "", body = "";
-            switch (type) {
-                case "pessoa":
-                    title = "➕ Nova Pessoa";
-                    body = `
-                        <label>Nome completo:</label>
-                        <input type="text" id="nome" placeholder="Ex: João Silva">
-                        <label>Tipo:</label>
-                        <select id="tipo"><option>Física</option><option>Jurídica</option></select>
-                        <label>CPF/CNPJ (apenas números):</label>
-                        <input type="text" id="documento" placeholder="Ex: 12345678900">
-                        <label>Contato (telefone):</label>
-                        <input type="text" id="contato" placeholder="Ex: 41999948340">
-                        <small style="color:#888;">Digite apenas números</small>
-                    `;
-                    break;
-                case "processo":
-                    title = "➕ Novo Processo";
-                    body = `
-                        <label>Número do processo:</label>
-                        <input type="text" id="numero" placeholder="Ex: 1234/2024">
-                        <label>Cliente:</label>
-                        <select id="clienteId">${dados.pessoas.map(p => `<option value="${p.id}">${p.nome}</option>`).join('')}</select>
-                        <label>Status:</label>
-                        <input type="text" id="status" placeholder="Ex: Em andamento">
-                        <label>Descrição:</label>
-                        <textarea id="descricao" placeholder="Descrição do processo"></textarea>
-                    `;
-                    break;
-                case "honorario":
-                    title = "💰 Lançar Honorário";
-                    body = `
-                        <label>Cliente:</label>
-                        <select id="pessoaId">${dados.pessoas.map(p => `<option value="${p.id}">${p.nome}</option>`).join('')}</select>
-                        <label>Valor Total (R$):</label>
-                        <input type="number" id="valorTotal" placeholder="Ex: 5000" step="0.01">
-                        <label>Número de Parcelas:</label>
-                        <input type="number" id="parcelas" placeholder="Ex: 10" min="1">
-                        <label>Parcelas Pagas:</label>
-                        <input type="number" id="parcelasPagas" value="0" min="0">
-                        <label>Dia de Vencimento (1-31):</label>
-                        <input type="number" id="vencimentoDia" placeholder="Ex: 27" min="1" max="31">
-                    `;
-                    break;
-            }
-            document.getElementById("modalTitle").innerText = title;
-            document.getElementById("modalBody").innerHTML = body;
+        // ------------------- MODAIS -------------------
+        function abrirModal(conteudo) {
+            document.getElementById("modal").innerHTML = conteudo;
             document.getElementById("modal").style.display = "flex";
+        }
+        function fecharModal() { document.getElementById("modal").style.display = "none"; }
+
+        function abrirModalPessoa(pessoa = null) {
+            const editando = !!pessoa;
+            const titulo = editando ? "Editar Pessoa" : "Nova Pessoa";
+            const nome = pessoa?.nome || '';
+            const tipo = pessoa?.tipo || 'Física';
+            const doc = pessoa?.documento || '';
+            const contato = pessoa?.contato || '';
+            const conteudo = `
+                <div class="modal-content">
+                    <h3>${titulo}</h3>
+                    <label>Nome:</label><input type="text" id="nome" value="${nome}">
+                    <label>Tipo:</label>
+                    <select id="tipo"><option ${tipo==="Física"?"selected":""}>Física</option><option ${tipo==="Jurídica"?"selected":""}>Jurídica</option></select>
+                    <label>CPF/CNPJ (só números):</label><input type="text" id="documento" value="${doc}">
+                    <label>Contato:</label><input type="text" id="contato" value="${contato}">
+                    <div style="display:flex; gap:10px; margin-top:20px;">
+                        <button onclick="fecharModal()" style="flex:1; background:#333; color:white; border:none; padding:10px; border-radius:6px;">Cancelar</button>
+                        <button id="salvarPessoaBtn" style="flex:1; background:#00aa44; color:white; border:none; padding:10px; border-radius:6px;">Salvar</button>
+                    </div>
+                </div>`;
+            abrirModal(conteudo);
+            document.getElementById("salvarPessoaBtn").onclick = async () => {
+                const nomeVal = document.getElementById("nome").value.trim();
+                const tipoVal = document.getElementById("tipo").value;
+                let docVal = document.getElementById("documento").value.replace(/\D/g, '');
+                let contatoVal = document.getElementById("contato").value.replace(/\D/g, '');
+                if (!nomeVal || !docVal) { alert("Preencha nome e documento."); return; }
+                // Verificar duplicidade
+                const duplicado = pessoas.find(p => p.documento === docVal && p.id !== pessoa?.id);
+                if (duplicado) { alert("Já existe uma pessoa com esse documento."); return; }
+                mostrarCarregando(true);
+                try {
+                    const dados = { nome: nomeVal, tipo: tipoVal, documento: docVal, contato: contatoVal, criadoEm: new Date().toISOString() };
+                    if (editando) {
+                        await pessoasRef.doc(pessoa.id).update(dados);
+                    } else {
+                        await pessoasRef.add(dados);
+                    }
+                    await carregarTodosDados();
+                    renderizarTudo();
+                    fecharModal();
+                    mostrarSucesso();
+                } catch (err) { alert("Erro ao salvar."); }
+                mostrarCarregando(false);
+            };
         }
 
         function editarPessoa(id) {
-            const p = dados.pessoas.find(p => p.id == id);
-            currentEditId = id;
-            currentModalType = "pessoa";
-            document.getElementById("modalTitle").innerText = "Editar Pessoa";
-            document.getElementById("modalBody").innerHTML = `
-                <label>Nome completo:</label>
-                <input type="text" id="nome" value="${p.nome}">
-                <label>Tipo:</label>
-                <select id="tipo"><option ${p.tipo=="Física"?"selected":""}>Física</option><option ${p.tipo=="Jurídica"?"selected":""}>Jurídica</option></select>
-                <label>CPF/CNPJ (apenas números):</label>
-                <input type="text" id="documento" value="${p.documento}">
-                <label>Contato:</label>
-                <input type="text" id="contato" value="${p.contato || ''}">
-            `;
-            document.getElementById("modal").style.display = "flex";
+            const p = pessoas.find(p => p.id === id);
+            if (p) abrirModalPessoa(p);
         }
+
+        async function excluirPessoa(id) {
+            const p = pessoas.find(p => p.id === id);
+            if (!p) return;
+            const procs = processos.filter(pr => pr.clienteId === id);
+            const hon = honorarios.filter(h => h.pessoaId === id);
+            if (!confirm(`Excluir ${p.nome}?\n\n⚠️ ${procs.length} processo(s) e ${hon.length} honorário(s) vinculados também serão removidos.`)) return;
+            mostrarCarregando(true);
+            try {
+                // Transação para remover tudo vinculado
+                await db.runTransaction(async transaction => {
+                    for (const proc of procs) {
+                        transaction.delete(processosRef.doc(proc.id));
+                        // remove timeline events
+                        const evts = timeline.filter(t => t.processoId === proc.id);
+                        evts.forEach(e => transaction.delete(timelineRef.doc(e.id)));
+                    }
+                    for (const h of hon) {
+                        transaction.delete(honorariosRef.doc(h.id));
+                    }
+                    transaction.delete(pessoasRef.doc(id));
+                });
+                await carregarTodosDados();
+                renderizarTudo();
+                mostrarSucesso();
+            } catch (err) { alert("Erro ao excluir."); }
+            mostrarCarregando(false);
+        }
+
+        function abrirModalProcesso(processo = null) {
+            const editando = !!processo;
+            const titulo = editando ? "Editar Processo" : "Novo Processo";
+            const numero = processo?.numero || '';
+            const statusOptions = ["Em andamento", "Suspenso", "Arquivado", "Finalizado", "Aguardando recurso"];
+            const statusAtual = processo?.status || 'Em andamento';
+            const descricao = processo?.descricao || '';
+            const clienteId = processo?.clienteId || (pessoas[0]?.id || '');
+            let optionsHtml = '';
+            pessoas.forEach(p => {
+                optionsHtml += `<option value="${p.id}" ${p.id === clienteId ? "selected" : ""}>${p.nome}</option>`;
+            });
+            let statusHtml = '';
+            statusOptions.forEach(s => {
+                statusHtml += `<option value="${s}" ${s === statusAtual ? "selected" : ""}>${s}</option>`;
+            });
+            const conteudo = `
+                <div class="modal-content">
+                    <h3>${titulo}</h3>
+                    <label>Número:</label><input type="text" id="numero" value="${numero}">
+                    <label>Cliente:</label><select id="clienteId">${optionsHtml}</select>
+                    <label>Status:</label><select id="status">${statusHtml}</select>
+                    <label>Descrição:</label><textarea id="descricao">${descricao}</textarea>
+                    ${editando ? `
+                    <hr style="border-color:#333;">
+                    <h4 style="color:#ffd700;">📌 Linha do Tempo</h4>
+                    <div id="timelineListModal"></div>
+                    <label>Novo evento:</label>
+                    <input type="date" id="timelineData"><input type="text" id="timelineDesc" placeholder="Descrição">
+                    <button id="addTimelineBtn" style="background:#ffd700; color:#000; border:none; padding:6px 12px; border-radius:6px; margin-top:10px;">+ Adicionar</button>
+                    ` : ''}
+                    <div style="display:flex; gap:10px; margin-top:20px;">
+                        <button onclick="fecharModal()" style="flex:1; background:#333; color:white; border:none; padding:10px; border-radius:6px;">Cancelar</button>
+                        <button id="salvarProcessoBtn" style="flex:1; background:#00aa44; color:white; border:none; padding:10px; border-radius:6px;">Salvar</button>
+                    </div>
+                </div>`;
+            abrirModal(conteudo);
+            if (editando) {
+                renderizarTimelineModal(processo.id);
+                document.getElementById("addTimelineBtn").onclick = async () => {
+                    const data = document.getElementById("timelineData").value;
+                    const desc = document.getElementById("timelineDesc").value;
+                    if (!data || !desc) { alert("Preencha data e descrição."); return; }
+                    await timelineRef.add({ processoId: processo.id, data, descricao: desc });
+                    await carregarTodosDados();
+                    renderizarTimelineModal(processo.id);
+                };
+            }
+            document.getElementById("salvarProcessoBtn").onclick = async () => {
+                const numeroVal = document.getElementById("numero").value.trim();
+                const clienteIdVal = document.getElementById("clienteId").value;
+                const statusVal = document.getElementById("status").value;
+                const descVal = document.getElementById("descricao").value.trim();
+                if (!numeroVal || !clienteIdVal) { alert("Número e cliente são obrigatórios."); return; }
+                mostrarCarregando(true);
+                try {
+                    const dados = { numero: numeroVal, clienteId: clienteIdVal, status: statusVal, descricao: descVal, criadoEm: new Date().toISOString() };
+                    if (editando) {
+                        await processosRef.doc(processo.id).update(dados);
+                    } else {
+                        await processosRef.add(dados);
+                    }
+                    await carregarTodosDados();
+                    renderizarTudo();
+                    fecharModal();
+                    mostrarSucesso();
+                } catch (err) { alert("Erro ao salvar."); }
+                mostrarCarregando(false);
+            };
+        }
+
         function editarProcesso(id) {
-            const proc = dados.processos.find(p => p.id == id);
-            currentEditId = id;
-            currentModalType = "processo";
-            document.getElementById("modalTitle").innerText = "Editar Processo";
-            document.getElementById("modalBody").innerHTML = `
-                <label>Número:</label>
-                <input type="text" id="numero" value="${proc.numero}">
-                <label>Cliente:</label>
-                <select id="clienteId">${dados.pessoas.map(p => `<option ${p.id==proc.clienteId?"selected":""} value="${p.id}">${p.nome}</option>`).join('')}</select>
-                <label>Status:</label>
-                <input type="text" id="status" value="${proc.status}">
-                <label>Descrição:</label>
-                <textarea id="descricao">${proc.descricao || ''}</textarea>
-                <hr style="margin:15px 0; border-color:#333;">
-                <h4 style="color:#ffd700;">📌 Linha do Tempo</h4>
-                <div id="timelineList"></div>
-                <label>Adicionar evento:</label>
-                <input type="date" id="timelineData">
-                <input type="text" id="timelineDesc" placeholder="Descrição">
-                <button onclick="adicionarTimeline(${id})" style="background:#ffd700; color:#000; border:none; padding:8px; border-radius:6px; cursor:pointer;">+ Adicionar</button>
-            `;
-            document.getElementById("modal").style.display = "flex";
-            renderizarTimelineModal(id);
+            const p = processos.find(p => p.id === id);
+            if (p) abrirModalProcesso(p);
         }
+
+        async function excluirProcesso(id) {
+            const p = processos.find(p => p.id === id);
+            if (!p) return;
+            const evts = timeline.filter(t => t.processoId === id);
+            if (!confirm(`Excluir processo ${p.numero}?\n\n⚠️ ${evts.length} evento(s) da linha do tempo também serão removidos.`)) return;
+            mostrarCarregando(true);
+            try {
+                await db.runTransaction(async trans => {
+                    trans.delete(processosRef.doc(id));
+                    evts.forEach(e => trans.delete(timelineRef.doc(e.id)));
+                });
+                await carregarTodosDados();
+                renderizarTudo();
+                mostrarSucesso();
+            } catch (err) { alert("Erro ao excluir."); }
+            mostrarCarregando(false);
+        }
+
         function renderizarTimelineModal(processoId) {
-            const eventos = dados.timeline.filter(t => t.processoId == processoId);
+            const evts = timeline.filter(t => t.processoId === processoId).sort((a,b) => a.data.localeCompare(b.data));
+            const div = document.getElementById("timelineListModal");
+            if (!div) return;
+            if (evts.length === 0) { div.innerHTML = "<p style='color:#ddd;'>Nenhum evento.</p>"; return; }
             let html = '<ul style="list-style:none; padding:0;">';
-            eventos.sort((a,b)=>a.data.localeCompare(b.data)).forEach(e => {
+            evts.forEach(e => {
                 html += `<li style="background:#0a0a0a; padding:8px; margin:5px 0; border-left:3px solid #ffd700; border-radius:4px; color:#ddd;">
                     <strong>${e.data}</strong> - ${e.descricao}
-                    <button onclick="excluirTimeline(${e.id})" style="float:right; background:#dc3545; color:white; border:none; border-radius:4px; padding:2px 8px; cursor:pointer;">❌</button>
+                    <button onclick="excluirEventoTimeline('${e.id}')" style="float:right; background:#dc3545; color:white; border:none; border-radius:4px; padding:2px 8px;">❌</button>
                 </li>`;
             });
             html += '</ul>';
-            if (eventos.length === 0) html = '<p style="color:#ddd;">Nenhum evento ainda.</p>';
-            const div = document.getElementById("timelineList");
-            if (div) div.innerHTML = html;
+            div.innerHTML = html;
         }
-        function adicionarTimeline(processoId) {
-            const data = document.getElementById("timelineData").value;
-            const desc = document.getElementById("timelineDesc").value;
-            if (data && desc) {
-                const newId = dados.timeline.length > 0 ? Math.max(...dados.timeline.map(t => t.id)) + 1 : 1;
-                dados.timeline.push({ id: newId, processoId: processoId, data, descricao: desc });
-                salvarDados().then(() => {
-                    renderizarTimelineModal(processoId);
-                    document.getElementById("timelineData").value = "";
-                    document.getElementById("timelineDesc").value = "";
-                });
-            } else {
-                alert("Preencha data e descrição.");
-            }
+
+        async function excluirEventoTimeline(id) {
+            if (!confirm("Remover evento?")) return;
+            await timelineRef.doc(id).delete();
+            await carregarTodosDados();
+            const procEditando = modalAtual === 'processo' ? document.getElementById("clienteId")?.dataset?.processoId : null;
+            if (procEditando) renderizarTimelineModal(procEditando);
+            else renderizarTudo();
         }
-        function excluirTimeline(id) {
-            if (confirm("Remover este evento da linha do tempo?")) {
-                dados.timeline = dados.timeline.filter(t => t.id != id);
-                salvarDados().then(() => {
-                    if (currentEditId && currentModalType === "processo") renderizarTimelineModal(currentEditId);
+
+        function verTimelineModal(processoId) {
+            const proc = processos.find(p => p.id === processoId);
+            if (!proc) return;
+            const evts = timeline.filter(t => t.processoId === processoId).sort((a,b) => a.data.localeCompare(b.data));
+            document.getElementById("timelineModalTitle").innerText = `📜 Linha do Tempo - ${proc.numero}`;
+            let body = '';
+            if (evts.length === 0) body = '<div class="empty-timeline">Nenhum evento.</div>';
+            else {
+                evts.forEach(e => {
+                    body += `<div class="timeline-event"><div class="timeline-date">📆 ${e.data}</div><div class="timeline-desc">${e.descricao}</div></div>`;
                 });
             }
+            document.getElementById("timelineModalBody").innerHTML = body;
+            document.getElementById("timelineModal").style.display = "flex";
         }
+        function fecharTimelineModal() { document.getElementById("timelineModal").style.display = "none"; }
+
+        function abrirModalHonorario(honorario = null) {
+            const editando = !!honorario;
+            const titulo = editando ? "Editar Honorário" : "Lançar Honorário";
+            const pessoaId = honorario?.pessoaId || (pessoas[0]?.id || '');
+            const valorTotal = honorario?.valorTotal || '';
+            const parcelas = honorario?.parcelas || '';
+            const parcelasPagas = honorario?.parcelasPagas || 0;
+            const vencimentoDia = honorario?.vencimentoDia || '';
+            let optionsHtml = '';
+            pessoas.forEach(p => {
+                optionsHtml += `<option value="${p.id}" ${p.id === pessoaId ? "selected" : ""}>${p.nome}</option>`;
+            });
+            const conteudo = `
+                <div class="modal-content">
+                    <h3>${titulo}</h3>
+                    <label>Cliente:</label><select id="pessoaId">${optionsHtml}</select>
+                    <label>Valor Total (R$):</label><input type="number" id="valorTotal" value="${valorTotal}" step="0.01">
+                    <label>Nº de Parcelas:</label><input type="number" id="parcelas" value="${parcelas}">
+                    <label>Parcelas Pagas:</label><input type="number" id="parcelasPagas" value="${parcelasPagas}">
+                    <label>Dia do Vencimento (1-31):</label><input type="number" id="vencimentoDia" value="${vencimentoDia}" min="1" max="31">
+                    <div style="display:flex; gap:10px; margin-top:20px;">
+                        <button onclick="fecharModal()" style="flex:1; background:#333; color:white; border:none; padding:10px; border-radius:6px;">Cancelar</button>
+                        <button id="salvarHonorarioBtn" style="flex:1; background:#00aa44; color:white; border:none; padding:10px; border-radius:6px;">Salvar</button>
+                    </div>
+                </div>`;
+            abrirModal(conteudo);
+            document.getElementById("salvarHonorarioBtn").onclick = async () => {
+                const pId = document.getElementById("pessoaId").value;
+                const vTotal = parseFloat(document.getElementById("valorTotal").value);
+                const parc = parseInt(document.getElementById("parcelas").value);
+                const pagas = parseInt(document.getElementById("parcelasPagas").value);
+                const dia = parseInt(document.getElementById("vencimentoDia").value);
+                if (!pId || !vTotal || !parc || !dia) { alert("Preencha todos os campos."); return; }
+                if (pagas > parc) { alert("Parcelas pagas não podem exceder o total."); return; }
+                if (dia < 1 || dia > 31) { alert("Dia inválido."); return; }
+                mostrarCarregando(true);
+                try {
+                    const dados = { pessoaId: pId, valorTotal: vTotal, parcelas: parc, parcelasPagas: pagas, vencimentoDia: dia, criadoEm: new Date().toISOString() };
+                    if (editando) {
+                        await honorariosRef.doc(honorario.id).update(dados);
+                    } else {
+                        await honorariosRef.add(dados);
+                    }
+                    await carregarTodosDados();
+                    renderizarTudo();
+                    fecharModal();
+                    mostrarSucesso();
+                } catch (err) { alert("Erro ao salvar."); }
+                mostrarCarregando(false);
+            };
+        }
+
         function editarHonorario(id) {
-            const h = dados.honorarios.find(h => h.id == id);
-            currentEditId = id;
-            currentModalType = "honorario";
-            document.getElementById("modalTitle").innerText = "Editar Honorário";
-            document.getElementById("modalBody").innerHTML = `
-                <label>Cliente:</label>
-                <select id="pessoaId">${dados.pessoas.map(p => `<option ${p.id==h.pessoaId?"selected":""} value="${p.id}">${p.nome}</option>`).join('')}</select>
-                <label>Valor Total:</label>
-                <input type="number" id="valorTotal" value="${h.valorTotal}" step="0.01">
-                <label>Parcelas:</label>
-                <input type="number" id="parcelas" value="${h.parcelas}">
-                <label>Parcelas Pagas:</label>
-                <input type="number" id="parcelasPagas" value="${h.parcelasPagas}">
-                <label>Dia Vencimento:</label>
-                <input type="number" id="vencimentoDia" value="${h.vencimentoDia}" min="1" max="31">
-            `;
-            document.getElementById("modal").style.display = "flex";
+            const h = honorarios.find(h => h.id === id);
+            if (h) abrirModalHonorario(h);
         }
-        async function excluirPessoa(id) {
-            if (!confirm("Excluir esta pessoa? Processos e honorários vinculados também serão removidos.")) return;
-            dados.pessoas = dados.pessoas.filter(p => p.id != id);
-            dados.processos = dados.processos.filter(p => p.clienteId != id);
-            dados.honorarios = dados.honorarios.filter(h => h.pessoaId != id);
-            await salvarDados();
-            renderizarTudo();
-        }
-        async function excluirProcesso(id) {
-            if (!confirm("Excluir processo e sua linha do tempo?")) return;
-            dados.processos = dados.processos.filter(p => p.id != id);
-            dados.timeline = dados.timeline.filter(t => t.processoId != id);
-            await salvarDados();
-            renderizarTudo();
-        }
+
         async function excluirHonorario(id) {
             if (!confirm("Excluir este honorário?")) return;
-            dados.honorarios = dados.honorarios.filter(h => h.id != id);
-            await salvarDados();
+            mostrarCarregando(true);
+            await honorariosRef.doc(id).delete();
+            await carregarTodosDados();
             renderizarTudo();
+            mostrarSucesso();
+            mostrarCarregando(false);
         }
 
-        // Evento do botão Salvar do modal genérico
-        document.getElementById("saveModalBtn").addEventListener("click", saveModal);
-
-        async function saveModal() {
-            if (currentModalType === "pessoa") {
-                const nome = document.getElementById("nome").value.trim();
-                const tipo = document.getElementById("tipo").value;
-                let documento = document.getElementById("documento").value.replace(/\D/g, '');
-                let contato = document.getElementById("contato").value.replace(/\D/g, '');
-                if (!nome || !documento) { alert("Nome e documento são obrigatórios."); return; }
-                if (currentEditId) {
-                    const idx = dados.pessoas.findIndex(p => p.id == currentEditId);
-                    dados.pessoas[idx] = { ...dados.pessoas[idx], nome, tipo, documento, contato };
-                } else {
-                    const newId = dados.pessoas.length > 0 ? Math.max(...dados.pessoas.map(p => p.id)) + 1 : 1;
-                    dados.pessoas.push({ id: newId, nome, tipo, documento, contato });
-                }
-                await salvarDados();
-                renderizarPessoas();
-            } else if (currentModalType === "processo") {
-                const numero = document.getElementById("numero").value.trim();
-                const clienteId = parseInt(document.getElementById("clienteId").value);
-                const status = document.getElementById("status").value.trim();
-                const descricao = document.getElementById("descricao").value.trim();
-                if (!numero || !clienteId) { alert("Número e cliente são obrigatórios."); return; }
-                if (currentEditId) {
-                    const idx = dados.processos.findIndex(p => p.id == currentEditId);
-                    dados.processos[idx] = { ...dados.processos[idx], numero, clienteId, status, descricao };
-                } else {
-                    const newId = dados.processos.length > 0 ? Math.max(...dados.processos.map(p => p.id)) + 1 : 1;
-                    dados.processos.push({ id: newId, numero, clienteId, status, descricao });
-                }
-                await salvarDados();
-                renderizarProcessos();
-            } else if (currentModalType === "honorario") {
-                const pessoaId = parseInt(document.getElementById("pessoaId").value);
-                const valorTotal = parseFloat(document.getElementById("valorTotal").value);
-                const parcelas = parseInt(document.getElementById("parcelas").value);
-                const parcelasPagas = parseInt(document.getElementById("parcelasPagas").value);
-                const vencimentoDia = parseInt(document.getElementById("vencimentoDia").value);
-                if (!pessoaId || !valorTotal || !parcelas || !vencimentoDia) { alert("Preencha todos os campos."); return; }
-                if (parcelasPagas > parcelas) { alert("Parcelas pagas não podem exceder o total."); return; }
-                if (vencimentoDia < 1 || vencimentoDia > 31) { alert("Dia de vencimento inválido."); return; }
-                if (currentEditId) {
-                    const idx = dados.honorarios.findIndex(h => h.id == currentEditId);
-                    dados.honorarios[idx] = { ...dados.honorarios[idx], pessoaId, valorTotal, parcelas, parcelasPagas, vencimentoDia };
-                } else {
-                    const newId = dados.honorarios.length > 0 ? Math.max(...dados.honorarios.map(h => h.id)) + 1 : 1;
-                    dados.honorarios.push({ id: newId, pessoaId, valorTotal, parcelas, parcelasPagas, vencimentoDia });
-                }
-                await salvarDados();
-                renderizarHonorarios();
-            }
-            closeModal();
-            renderizarVencimentos();
-        }
-
-        function closeModal() {
-            document.getElementById("modal").style.display = "none";
-            currentEditId = null;
+        // Fechar modais ao clicar fora
+        window.onclick = function(event) {
+            if (event.target === document.getElementById("modal")) fecharModal();
+            if (event.target === document.getElementById("timelineModal")) fecharTimelineModal();
         }
     </script>
 </body>
